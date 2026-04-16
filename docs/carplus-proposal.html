@@ -660,19 +660,28 @@ p { margin-bottom: 16px; }
       </div>
     </div>
     <div class="flow-arrow">&darr;</div>
-    <div class="flow-step">
-      <div class="flow-icon flow-icon-orange">3a</div>
-      <div>
-        <strong>&ge;3&starf;：AI 自動生成 + 發佈回覆</strong>
-        <p style="font-size:14px; color:var(--slate);">根據評論內容客製化回覆，像真人一樣自然。完全不需要人工介入。</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:8px 0;">
+      <div style="background:var(--paper); border-radius:10px; padding:24px; border-top:4px solid var(--green);">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--green); margin-bottom:8px;">3a &mdash; &ge;3&starf; 好評</div>
+        <strong style="color:var(--green);">AI 自動回覆</strong>
+        <p style="font-size:14px; color:var(--slate); margin-top:8px;">根據評論內容客製化回覆，像真人一樣自然。<br><strong>完全不需要人工介入。</strong></p>
+        <div style="margin-top:16px; font-size:13px; color:var(--sage);">
+          &#10003; AI 生成回覆<br>
+          &#10003; 自動發佈<br>
+          &#10003; 寫入追蹤表
+        </div>
       </div>
-    </div>
-    <div class="flow-arrow">&darr;</div>
-    <div class="flow-step">
-      <div class="flow-icon flow-icon-orange">3b</div>
-      <div>
-        <strong>&lt;3&starf;：AI 先回覆安撫 &rarr; 通知店長 &rarr; 系統追蹤</strong>
-        <p style="font-size:14px; color:var(--slate);">AI 先發一則安全的公開回覆安撫客人情緒，同時 Email 通知店長在 24 小時內私下聯繫客人處理。系統自動追蹤處理進度，未結案會持續提醒。</p>
+      <div style="background:var(--paper); border-radius:10px; padding:24px; border-top:4px solid var(--orange);">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--orange); margin-bottom:8px;">3b &mdash; &lt;3&starf; 低星</div>
+        <strong style="color:var(--orange);">AI 安撫 &rarr; 人工處理 &rarr; 系統追蹤</strong>
+        <p style="font-size:14px; color:var(--slate); margin-top:8px;">AI 先發公開回覆安撫情緒，同時通知店長 24hr 內私下聯繫處理。</p>
+        <div style="margin-top:16px; font-size:13px; color:var(--sage);">
+          &#10003; AI 先回覆安撫<br>
+          &#10003; Email 通知店長<br>
+          &#10003; 24hr 未處理自動提醒<br>
+          &#10003; 72hr 未處理升級督導<br>
+          &#10003; 系統追蹤直到結案
+        </div>
       </div>
     </div>
     <div class="flow-arrow">&darr;</div>
@@ -686,12 +695,10 @@ p { margin-bottom: 16px; }
   </div>
 
   <h3>系統 Demo</h3>
-  <div class="screenshot-box">
-    <p style="margin-bottom: 16px;">點擊下方連結觀看完整系統操作示範：</p>
-    <a href="https://www.loom.com/share/ec92d6b01c7c409c98d47846a701d05b" target="_blank"
-       style="display:inline-block; background:var(--orange); color:white; padding:14px 32px; border-radius:8px; text-decoration:none; font-weight:500;">
-      &#9654; 觀看 Demo 影片
-    </a>
+  <div class="screenshot-box" style="padding:0; overflow:hidden;">
+    <div style="position:relative; padding-bottom:56.25%; height:0;">
+      <iframe src="https://www.loom.com/embed/ec92d6b01c7c409c98d47846a701d05b" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position:absolute; top:0; left:0; width:100%; height:100%; border-radius:12px;"></iframe>
+    </div>
   </div>
 </div>
 
