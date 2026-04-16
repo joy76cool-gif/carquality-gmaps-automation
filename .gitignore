@@ -1,0 +1,5 @@
+.DS_Store
+*.mov
+node_modules/
+.env
+.playwright-mcp/

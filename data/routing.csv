@@ -1,0 +1,4 @@
+pos_store_id,store_name,gbp_location_id,notify_channel,notify_target_id,line_groupId,slack_channelId,escalation_target_id,tz,active,last_seen_review_time,last_sync_at
+001,車麗屋 台北民權店,,email,,,,,Asia/Taipei,TRUE,,
+002,車麗屋 台北內湖店,,email,,,,,Asia/Taipei,TRUE,,
+003,車麗屋 台北士林店,,email,,,,,Asia/Taipei,TRUE,,

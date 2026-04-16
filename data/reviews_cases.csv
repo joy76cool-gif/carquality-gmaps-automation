@@ -1,0 +1,1 @@
+review_id,gbp_location_id,pos_store_id,rating,review_text,created_at,rp_path,risk_flags,draft_public_reply,final_public_reply,public_reply_status,public_replied_at,case_status,customer_contact_provided,contact_masked,resolution_type,resolution_note_internal,owner,next_reminder_at,reminder_count,source,updated_at
