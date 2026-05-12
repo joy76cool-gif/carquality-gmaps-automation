@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>車麗屋 GMaps 自動回覆 — Tone Review</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green: #1B4332;
+  --orange: #E76F51;
+  --paper: #f6f4f0;
+  --cream: #eceae4;
+  --slate: #4a5e54;
+  --sage: #9aab9f;
+  --white: #ffffff;
+  --ok: #2e7d32;
+  --warn: #e65100;
+  --err: #c62828;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: var(--paper);
+  color: #333;
+  line-height: 1.75;
+  font-size: 16px;
+}
+.section { max-width: 960px; margin: 0 auto; padding: 64px 24px; }
+
+/* Hero */
+.hero {
+  background: var(--green);
+  color: var(--white);
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 60px 24px;
+}
+.hero-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--sage);
+  margin-bottom: 24px;
+}
+.hero h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(28px, 5vw, 52px);
+  line-height: 1.3;
+  max-width: 800px;
+  margin-bottom: 24px;
+}
+.hero h1 .highlight { color: var(--orange); }
+.hero-sub {
+  font-size: 18px;
+  color: var(--sage);
+  max-width: 600px;
+  margin-bottom: 40px;
+}
+.hero-stats { display: flex; gap: 36px; flex-wrap: wrap; justify-content: center; }
+.hero-stat .num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 42px;
+  color: var(--orange);
+  display: block;
+}
+.hero-stat .label { font-size: 13px; color: var(--sage); }
+
+/* Section */
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 12px;
+}
+h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(24px, 4vw, 36px);
+  color: var(--green);
+  margin-bottom: 20px;
+  line-height: 1.3;
+}
+h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--green);
+  margin: 24px 0 12px;
+}
+p { margin-bottom: 14px; }
+
+/* Card grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+.card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border-left: 4px solid var(--orange);
+}
+.card h4 {
+  font-size: 15px;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.card p { font-size: 14px; color: var(--slate); margin: 0; }
+
+/* Rule table */
+.rule-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--white);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  margin: 20px 0;
+}
+.rule-table th {
+  background: var(--green);
+  color: var(--white);
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+}
+.rule-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--cream);
+  font-size: 14px;
+  vertical-align: top;
+}
+.rule-table tr:last-child td { border-bottom: none; }
+.rule-table .do { color: var(--ok); }
+.rule-table .dont { color: var(--err); }
+
+/* Callout */
+.callout {
+  background: var(--green);
+  color: var(--white);
+  padding: 28px;
+  border-radius: 12px;
+  margin: 24px 0;
+}
+.callout h3 { color: var(--orange); margin-top: 0; }
+.callout p { color: var(--sage); }
+.callout strong { color: var(--white); }
+
+/* Filter bar */
+.filter-bar {
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+  z-index: 10;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--cream);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin: 16px 0;
+}
+.filter-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.filter-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  border: 1px solid var(--sage);
+  background: var(--white);
+  color: var(--slate);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.filter-btn.active {
+  background: var(--green);
+  color: var(--white);
+  border-color: var(--green);
+}
+.filter-btn:hover:not(.active) {
+  border-color: var(--green);
+}
+.filter-count {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--slate);
+}
+
+/* Sample card */
+.sample {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border-left: 5px solid var(--sage);
+}
+.sample.verdict-ok { border-left-color: var(--ok); }
+.sample.verdict-warn { border-left-color: var(--warn); }
+.sample.verdict-err { border-left-color: var(--err); }
+
+.sample-meta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--slate);
+  margin-bottom: 14px;
+}
+.sample-star {
+  background: var(--orange);
+  color: white;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+.sample-star.low {
+  background: var(--err);
+}
+.sample-verdict {
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+.sample-verdict.ok { background: #e8f5e9; color: var(--ok); }
+.sample-verdict.warn { background: #fff3e0; color: var(--warn); }
+.sample-verdict.err { background: #fde8e8; color: var(--err); }
+
+.sample-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+.sample-col h5 {
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--slate);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--cream);
+}
+.sample-col .text {
+  font-size: 14px;
+  color: #444;
+  white-space: pre-wrap;
+  line-height: 1.65;
+}
+.sample-col.review .text { color: #555; }
+.sample-col.human .text { color: var(--slate); }
+.sample-col.ai .text { color: var(--green); font-weight: 500; }
+
+@media (max-width: 720px) {
+  .sample-cols { grid-template-columns: 1fr; }
+  .sample-col + .sample-col {
+    border-top: 1px solid var(--cream);
+    padding-top: 14px;
+    margin-top: 4px;
+  }
+}
+
+/* Pros/Cons */
+.proscons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 20px 0;
+}
+@media (max-width: 600px) {
+  .proscons { grid-template-columns: 1fr; }
+}
+.proscons-card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.proscons-card.pro { border-top: 4px solid var(--ok); }
+.proscons-card.con { border-top: 4px solid var(--warn); }
+.proscons-card h4 {
+  font-size: 18px;
+  color: var(--green);
+  margin-bottom: 14px;
+}
+.proscons-card ul {
+  list-style: none;
+  padding: 0;
+}
+.proscons-card li {
+  font-size: 14px;
+  color: var(--slate);
+  padding: 8px 0;
+  padding-left: 24px;
+  position: relative;
+  line-height: 1.7;
+}
+.proscons-card.pro li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--ok);
+  font-weight: 700;
+}
+.proscons-card.con li::before {
+  content: '!';
+  position: absolute;
+  left: 0;
+  color: var(--warn);
+  font-weight: 700;
+}
+
+/* Cost table */
+.cost-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--white);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  margin: 16px 0;
+}
+.cost-table th, .cost-table td {
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 14px;
+}
+.cost-table th {
+  background: var(--green);
+  color: var(--white);
+  font-weight: 500;
+}
+.cost-table td {
+  border-bottom: 1px solid var(--cream);
+}
+.cost-table tr:last-child td { border-bottom: none; }
+.cost-table .num {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  color: var(--orange);
+}
+
+/* Decision */
+.decision-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin: 24px 0;
+}
+@media (max-width: 720px) {
+  .decision-grid { grid-template-columns: 1fr; }
+}
+.decision-card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border-top: 4px solid var(--sage);
+}
+.decision-card.approve { border-top-color: var(--ok); }
+.decision-card.adjust { border-top-color: var(--warn); }
+.decision-card.reject { border-top-color: var(--err); }
+.decision-card h4 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: var(--green);
+}
+.decision-card p {
+  font-size: 13px;
+  color: var(--slate);
+  margin: 0;
+}
+
+/* Timeline */
+.timeline {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  margin: 24px 0;
+}
+.timeline-step {
+  display: flex;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px dashed var(--cream);
+}
+.timeline-step:last-child { border-bottom: none; }
+.timeline-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--orange);
+  font-weight: 700;
+  flex-shrink: 0;
+  width: 80px;
+}
+.timeline-text {
+  font-size: 14px;
+  color: var(--slate);
+}
+
+/* Source note */
+.source {
+  font-size: 11px;
+  color: #888;
+  font-family: 'JetBrains Mono', monospace;
+  margin-top: 8px;
+}
+
+/* Footer */
+footer {
+  background: var(--green);
+  color: var(--sage);
+  text-align: center;
+  padding: 32px;
+  font-size: 13px;
+}
+footer a { color: var(--orange); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<!-- TAB NAV -->
+<nav style="position: sticky; top: 0; z-index: 100; background: var(--green); padding: 10px 16px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; box-shadow: 0 2px 12px rgba(0,0,0,0.15);">
+  <a href="carquality-proposal.html" style="padding: 10px 22px; color: rgba(255,255,255,0.7); text-decoration: none; border-radius: 20px; font-size: 14px; font-weight: 500; transition: all 0.2s;">📋 完整提案</a>
+  <a href="tone-review-行銷主管-2026-05-12.html" style="padding: 10px 22px; color: white; text-decoration: none; border-radius: 20px; background: var(--orange); font-size: 14px; font-weight: 700;">🎯 Tone Review · 5/12</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">CAR QUALITY × JOMO POWER · 給 行銷主管 + 八德店主管</div>
+  <h1>GMaps 自動回覆 <span class="highlight">Tone Review</span></h1>
+  <p class="hero-sub">八德店 pilot 已 5/13 啟動 · 跑 14 天觀察<br>請於 <strong>5/15（週五）</strong> 前回覆 4 個 Decision → 5/16 起套用調整</p>
+  <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-bottom:24px;">
+    <a href="#what-to-decide" style="display:inline-block; padding:14px 28px; background:var(--orange); color:white; border-radius:30px; text-decoration:none; font-weight:500;">→ 你要決定什麼</a>
+    <a href="#live-demo" style="display:inline-block; padding:14px 28px; background:transparent; color:var(--sage); border:1px solid var(--sage); border-radius:30px; text-decoration:none; font-weight:500;">▶ Live Demo 影片</a>
+  </div>
+
+  <!-- Progress bar -->
+  <div style="background:rgba(255,255,255,0.05); border-radius:12px; padding:18px 24px; max-width:760px; width:100%; margin-top: 16px;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size:11px; color:var(--sage); margin-bottom:12px; letter-spacing:1px;">目前進度 · CURRENT STAGE</div>
+    <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:13px;">
+      <span style="color:var(--ok);">✓ 系統建好</span>
+      <span style="color:var(--sage);">›</span>
+      <span style="color:var(--ok);">✓ 50 sample 跑完</span>
+      <span style="color:var(--sage);">›</span>
+      <span style="color:var(--ok);">✓ 八德 pilot 啟動（5/13）</span>
+      <span style="color:var(--sage);">›</span>
+      <span style="background:var(--orange); color:white; padding:4px 12px; border-radius:14px; font-weight:700;">★ 主管 review（5/15 前）</span>
+      <span style="color:var(--sage);">›</span>
+      <span style="color:var(--sage);">5/16 套用調整</span>
+      <span style="color:var(--sage);">›</span>
+      <span style="color:var(--sage);">桃園 4 店</span>
+      <span style="color:var(--sage);">›</span>
+      <span style="color:var(--sage);">33 店全鋪</span>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><span class="num">50</span><span class="label">SAMPLE 對比</span></div>
+    <div class="hero-stat"><span class="num">43</span><span class="label">高分 4-5★</span></div>
+    <div class="hero-stat"><span class="num">7</span><span class="label">負評 1-2★</span></div>
+    <div class="hero-stat"><span class="num">NT$12</span><span class="label">AI 月成本 33店</span></div>
+  </div>
+</section>
+
+<!-- WHAT TO DECIDE (summary at top) -->
+<section class="section" id="what-to-decide">
+  <div class="section-label">Your Decisions</div>
+  <h2>你看完這份文件 · 要決定 4 件事</h2>
+  <p>下面是四個獨立的問題，請各自選一個。八德店 pilot 已 5/13 啟動跑著，這份是讓 <strong>行銷主管 + 八德店主管</strong> 看 AI tone 是否需要調整。<strong>5/15（週五）前</strong>回覆後：</p>
+  <ul style="color: var(--slate); font-size: 14px; margin: 0 0 12px; padding-left: 22px;">
+    <li><strong>Decision 1-3</strong> → Joy 5/16 起套用調整（AI prompt tune / post 延遲 / 夜間靜默）</li>
+    <li><strong>Decision 4</strong> → 結果交車麗屋 IT 評估 0800 系統整合排期</li>
+  </ul>
+  <p style="font-size: 13px; color: var(--sage); margin-top: 8px; font-style: italic;">📌 客訴升級 SOP（24hr/72hr 提醒 + 升督導）+ Workflow B 保底掃描 + Workflow C 月報 = <strong>Phase 2 全鋪時再 build</strong>。本 pilot 只跑八德 Workflow A + 確認 4 件事。Decision 4 先定「客訴反饋 channel」，Workflow C 月報抓邏輯 Phase 2 再做。</p>
+
+  <!-- Decision 1 -->
+  <div style="background: var(--white); border-radius: 12px; padding: 28px; margin: 24px 0; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-top: 5px solid var(--orange);">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--orange); letter-spacing: 2px; margin-bottom: 6px;">DECISION 1 / 4</div>
+    <h3 style="margin: 0 0 16px; font-size: 22px;">AI 生成的 tone 符不符合車麗屋品牌？</h3>
+    <p style="color: var(--slate); font-size: 14px; margin-bottom: 16px;">看下方 50 則對比，判斷 AI 草稿是否符合「不像機器人」+ tone 5 條 + 負評紅線 5 條。</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+      <div style="padding: 14px; background: #e8f5e9; border-radius: 8px; border-left: 3px solid var(--ok);">
+        <div style="font-weight: 700; color: var(--ok); margin-bottom: 4px;">A · 全 OK</div>
+        <div style="font-size: 13px; color: var(--slate);">直接啟動 14 天 pilot</div>
+      </div>
+      <div style="padding: 14px; background: #fff3e0; border-radius: 8px; border-left: 3px solid var(--warn);">
+        <div style="font-weight: 700; color: var(--warn); margin-bottom: 4px;">B · 部分需調</div>
+        <div style="font-size: 13px; color: var(--slate);">標出 review_id + 怎麼改</div>
+      </div>
+      <div style="padding: 14px; background: #fde8e8; border-radius: 8px; border-left: 3px solid var(--err);">
+        <div style="font-weight: 700; color: var(--err); margin-bottom: 4px;">C · 整體不符</div>
+        <div style="font-size: 13px; color: var(--slate);">說明哪邊要大改</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Decision 2 -->
+  <div style="background: var(--white); border-radius: 12px; padding: 28px; margin: 24px 0; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-top: 5px solid var(--green);">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--green); letter-spacing: 2px; margin-bottom: 6px;">DECISION 2 / 4</div>
+    <h3 style="margin: 0 0 16px; font-size: 22px;">AI 多快回覆才不像「機器人」？</h3>
+    <p style="color: var(--slate); font-size: 14px; margin-bottom: 16px;">目前 cron <strong>每 1 分鐘</strong>掃描。客戶 6:23 留評論，最晚 6:24 看到 AI 回覆。</p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+      <div style="padding: 14px; background: var(--cream); border-radius: 8px;">
+        <div style="font-weight: 700; color: var(--green); margin-bottom: 4px;">1️⃣ 1 分鐘</div>
+        <div style="font-size: 13px; color: var(--slate);">SEO 最快 · 但易被識破是 AI</div>
+      </div>
+      <div style="padding: 14px; background: #fff8e6; border-radius: 8px; border: 2px solid var(--orange);">
+        <div style="font-weight: 700; color: var(--orange); margin-bottom: 4px;">★ 58 分鐘 <span style="font-size: 11px; background: var(--orange); color: white; padding: 2px 8px; border-radius: 10px; margin-left: 4px;">推薦</span></div>
+        <div style="font-size: 13px; color: var(--slate);">不拖太久也不假 · 像「店員剛好有空看到」</div>
+      </div>
+      <div style="padding: 14px; background: var(--cream); border-radius: 8px;">
+        <div style="font-weight: 700; color: var(--green); margin-bottom: 4px;">3️⃣ 1-3 小時</div>
+        <div style="font-size: 13px; color: var(--slate);">最像真人 · SEO 加分少</div>
+      </div>
+    </div>
+    <p style="font-size: 13px; color: var(--slate); margin-top: 14px; margin-bottom: 0;">💡 <strong>為什麼推 58 分鐘</strong>：避開整點（00:00 / 01:00 一致時間 stamp 反而像機器），落在 ~1 小時內仍 SEO friendly，客訴不會拖太久也不會太假。</p>
+    <p style="font-size: 12px; color: var(--sage); margin-top: 8px; margin-bottom: 0; font-style: italic;">📌 實作說明：系統每 1 分鐘掃描新評論，但 post 時機加入「延遲佇列」（你選的時間），不是改成每 58 分鐘才掃。所以掃得快、回得慢 = 不漏評論又不像機器。</p>
+  </div>
+
+  <!-- Decision 3 -->
+  <div style="background: var(--white); border-radius: 12px; padding: 28px; margin: 24px 0; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-top: 5px solid var(--slate);">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--slate); letter-spacing: 2px; margin-bottom: 6px;">DECISION 3 / 4</div>
+    <h3 style="margin: 0 0 16px; font-size: 22px;">夜間要不要靜默？</h3>
+    <p style="color: var(--slate); font-size: 14px; margin-bottom: 16px;">凌晨 3 點 AI 自動回覆 = 客戶馬上識破「店家不可能 3 點還回」。夜間時段是否關掉 cron？</p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+      <div style="padding: 14px; background: var(--cream); border-radius: 8px;">
+        <div style="font-weight: 700; color: var(--green); margin-bottom: 4px;">00:00 - 08:00 靜默</div>
+        <div style="font-size: 13px; color: var(--slate);">凌晨評論早上 8 點才回（但 8 點還沒開店）</div>
+      </div>
+      <div style="padding: 14px; background: #fff8e6; border-radius: 8px; border: 2px solid var(--orange);">
+        <div style="font-weight: 700; color: var(--orange); margin-bottom: 4px;">★ 22:00 - 09:00 靜默 <span style="font-size: 11px; background: var(--orange); color: white; padding: 2px 8px; border-radius: 10px; margin-left: 4px;">推薦</span></div>
+        <div style="font-size: 13px; color: var(--slate);">配合八德店實際營業 9:00-22:00 · 開門才回</div>
+      </div>
+      <div style="padding: 14px; background: var(--cream); border-radius: 8px;">
+        <div style="font-weight: 700; color: var(--green); margin-bottom: 4px;">24 小時都回</div>
+        <div style="font-size: 13px; color: var(--slate);">SEO 最佳但凌晨回明顯非人類</div>
+      </div>
+    </div>
+    <p style="font-size: 13px; color: var(--slate); margin-top: 14px; margin-bottom: 0;">💡 <strong>為什麼推 22:00-09:00</strong>：八德店實際營業 9:00-22:00。靜默期 = 非營業時段，AI 早上 9 點開店才回，跟真實店員作息一致。負評在夜間累積，店長早上 9 點看 Sheet 攔截 + AI 同步生回覆。</p>
+  </div>
+
+  <!-- Decision 4 -->
+  <div style="background: var(--white); border-radius: 12px; padding: 28px; margin: 24px 0; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-top: 5px solid var(--orange);">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--orange); letter-spacing: 2px; margin-bottom: 6px;">DECISION 4 / 4</div>
+    <h3 style="margin: 0 0 16px; font-size: 22px;">客訴反饋紀錄進哪？</h3>
+    <p style="color: var(--slate); font-size: 14px; margin-bottom: 16px;">八德店主管收到 &lt;3★ Email 通知 → 私下聯繫客戶後，客戶反饋的「處理紀錄 / 結案狀態」要放哪個系統？這個 pilot 階段就需要決定。</p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+      <div style="padding: 14px; background: var(--cream); border-radius: 8px;">
+        <div style="font-weight: 700; color: var(--green); margin-bottom: 4px;">A · Google Sheet only</div>
+        <div style="font-size: 13px; color: var(--slate);">店長直接在 Sheet 寫處理紀錄 + 標 status<br>輕量、Workflow C 月報好抓</div>
+      </div>
+      <div style="padding: 14px; background: var(--cream); border-radius: 8px;">
+        <div style="font-weight: 700; color: var(--green); margin-bottom: 4px;">B · 0800 客服系統 only</div>
+        <div style="font-size: 13px; color: var(--slate);">客訴轉進車麗屋既有 0800 ticket<br>跟既有 SOP 一致，但 Workflow C 抓不到</div>
+      </div>
+      <div style="padding: 14px; background: var(--cream); border-radius: 8px;">
+        <div style="font-weight: 700; color: var(--green); margin-bottom: 4px;">C · 兩個都進</div>
+        <div style="font-size: 13px; color: var(--slate);">Sheet + 0800 同步寫<br>完整 trace 但要雙寫工作量</div>
+      </div>
+    </div>
+
+    <!-- (C) 都進的流程圖 -->
+    <div style="margin-top: 20px; padding: 16px 20px; background: #f9fafb; border-radius: 8px; border-left: 3px solid var(--orange); overflow-x: auto;">
+      <div style="font-weight: 700; color: var(--orange); margin-bottom: 10px; font-size: 14px;">📋 (C) 都進 — 完整流程</div>
+      <pre style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--slate); line-height: 1.6; margin: 0; white-space: pre;">客戶留 &lt;3★ 評論
+  ↓
+Workflow A：AI 安撫公開回覆 + Email 通知店長
+  ↓ 同步雙寫
+  ├─ Google Sheet：開 case row（status: pending）
+  └─ 0800 系統：開 ticket（內部 ticket id）
+  ↓
+店長私下聯繫客戶 + 處理
+  ↓ 同步雙寫
+  ├─ Sheet：寫處理紀錄 + status closed
+  └─ 0800：ticket update + close
+  ↓
+Phase 2 起 Workflow C 月報抓 Sheet 結案率
+（pilot 階段 Workflow C 不 build，先紀錄方式定型）</pre>
+      <p style="font-size: 12px; color: var(--sage); margin-top: 10px; margin-bottom: 0; font-style: italic;">📌 (C) 要 IT 開 0800 系統 API / webhook 接收 case，建置時程依車麗屋 0800 系統型態而定，<strong>待 IT 評估 API 開放程度後 confirm</strong></p>
+    </div>
+
+    <p style="font-size: 13px; color: var(--slate); margin-top: 14px; margin-bottom: 0;">💡 <strong>給行銷主管 + 八德店主管一起決定</strong>：行銷主管熟既有 0800 客服 flow，八德店主管熟現場「店長收到通知後實際怎麼紀錄」。<strong>★ Joy 傾向 A（最輕量上路 pilot 階段）</strong>，但 0800 既有 SOP 你們最熟，最終你們定。可附「目前 0800 ticket 怎麼開 + 八德店長現場怎麼紀錄」說明一起回。</p>
+  </div>
+
+  <div class="callout" style="border-left: 5px solid var(--orange);">
+    <h3>📝 怎麼給回應</h3>
+    <p>Decision 1（tone）: <strong>A / B / C</strong>（B 的話標 review_id + 建議）</p>
+    <p>Decision 2（速度）: <strong>1 分鐘 / 58 分鐘 / 1-3 小時</strong>（或具體分鐘數）</p>
+    <p>Decision 3（夜間）: <strong>22-09 靜默 / 00-08 靜默 / 不靜默</strong>（或自訂時段）</p>
+    <p>Decision 4（客訴反饋）: <strong>A Sheet only / B 0800 only / C 兩個都進</strong>（行銷主管 + 八德店主管一起決定，附 0800 既有 SOP + 店長現場紀錄習慣）</p>
+    <p style="margin-top: 12px;">回應給 Joy LINE / email 即可。</p>
+    <p style="margin-top: 12px; padding: 14px 18px; background: var(--orange); color: white; border-radius: 8px; font-weight: 700; font-size: 15px;">⏰ 請於 <strong style="color: white;">5/15（週五）23:59 前</strong>回覆。八德 pilot 已 5/13 啟動，<strong style="color: white;">5/16 起套用</strong>你們的調整意見。</p>
+  </div>
+</section>
+
+<!-- LIVE DEMO -->
+<section class="section" id="live-demo">
+  <div class="section-label">Live Demo</div>
+  <h2>實機示範：留評論到自動回覆 ＜ 1 分鐘</h2>
+  <p>Joy 在 Google Maps 留一則評論 → 八德店 GBP 後台 1 分鐘內 AI 自動 post 回覆。<strong>整段沒人介入。</strong></p>
+  <p style="font-size: 13px; color: var(--slate); background: #fff8e6; border-left: 3px solid var(--orange); padding: 10px 14px; border-radius: 6px;">⚠ 影片展示用「每 1 分鐘」cron 證明系統能跑通。<strong>實際上線速度由你 Decision 2 決定</strong>（推薦 58 分鐘，避免被識破是 AI）。</p>
+  <div style="background: var(--white); border-radius: 12px; padding: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin: 24px 0;">
+    <video controls preload="metadata" style="width: 100%; max-height: 600px; border-radius: 8px; background: #000;">
+      <source src="live-demo-2026-05-12.mp4" type="video/mp4">
+      <source src="live-demo-2026-05-12.mov" type="video/quicktime">
+      影片載入中 — 你的瀏覽器不支援 HTML5 video，請直接下載：
+      <a href="live-demo-2026-05-12.mp4">live-demo-2026-05-12.mp4</a>
+    </video>
+    <p style="font-size: 13px; color: var(--slate); margin-top: 12px; margin-bottom: 0;">
+      📹 螢幕錄影｜2026-05-12｜車麗屋八德店 GBP 實機演示
+    </p>
+  </div>
+</section>
+
+<!-- PIPELINE FLOW -->
+<section class="section" id="pipeline">
+  <div class="section-label">Pipeline</div>
+  <h2>資料流程 + 回覆時機</h2>
+  <p>從客戶留評論到 Google Maps 顯示 AI 回覆，整個 pipeline 自動跑，目前設定<strong>每 1 分鐘</strong>掃描一次新評論。</p>
+
+  <div style="background: var(--white); border-radius: 12px; padding: 28px; margin: 24px 0; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow-x: auto;">
+    <div style="display: flex; flex-direction: column; gap: 12px; min-width: 600px;">
+
+      <!-- Step 1 -->
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="background: var(--orange); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: 'JetBrains Mono', monospace; flex-shrink: 0;">1</div>
+        <div style="flex: 1; padding: 10px 16px; background: var(--cream); border-radius: 8px;">
+          <strong>客戶</strong>在 Google Maps 八德店留評論
+        </div>
+      </div>
+      <div style="text-align: center; color: var(--sage); font-size: 18px; margin-left: 14px;">↓</div>
+
+      <!-- Step 2 -->
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="background: var(--orange); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: 'JetBrains Mono', monospace; flex-shrink: 0;">2</div>
+        <div style="flex: 1; padding: 10px 16px; background: var(--cream); border-radius: 8px;">
+          <strong>n8n cron（每 1 分鐘）</strong>抓取 GBP 最新評論
+        </div>
+      </div>
+      <div style="text-align: center; color: var(--sage); font-size: 18px; margin-left: 14px;">↓</div>
+
+      <!-- Step 3 -->
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="background: var(--orange); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: 'JetBrains Mono', monospace; flex-shrink: 0;">3</div>
+        <div style="flex: 1; padding: 10px 16px; background: var(--cream); border-radius: 8px;">
+          過濾<strong>已回覆 / 已處理</strong>的 → 只留新評論
+        </div>
+      </div>
+      <div style="text-align: center; color: var(--sage); font-size: 18px; margin-left: 14px;">↓</div>
+
+      <!-- Step 4 -->
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="background: var(--orange); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: 'JetBrains Mono', monospace; flex-shrink: 0;">4</div>
+        <div style="flex: 1; padding: 10px 16px; background: var(--cream); border-radius: 8px;">
+          <strong>星等分流</strong>：≥ 3★ 走自動路徑，&lt; 3★ 走人工 review
+        </div>
+      </div>
+
+      <!-- Split arrows -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px;">
+        <div style="text-align: center; color: var(--sage); font-size: 18px;">↓ ≥ 3 ★</div>
+        <div style="text-align: center; color: var(--sage); font-size: 18px;">↓ &lt; 3 ★</div>
+      </div>
+
+      <!-- 5a / 5b -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div style="padding: 12px 16px; background: #e8f5e9; border-radius: 8px; border-left: 3px solid var(--ok);">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ok); margin-bottom: 4px;">5a · 正評 prompt</div>
+          <strong>Claude Haiku 4.5</strong> 生回覆<br><span style="font-size: 13px; color: var(--slate);">遵守 tone 規範 5 條</span>
+        </div>
+        <div style="padding: 12px 16px; background: #fff3e0; border-radius: 8px; border-left: 3px solid var(--warn);">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--warn); margin-bottom: 4px;">5b · 負評 prompt</div>
+          <strong>Claude Haiku 4.5</strong> 生回覆<br><span style="font-size: 13px; color: var(--slate);">遵守紅線 5 條（不認錯 / 不補償）</span>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px;">
+        <div style="text-align: center; color: var(--sage); font-size: 18px;">↓</div>
+        <div style="text-align: center; color: var(--sage); font-size: 18px;">↓</div>
+      </div>
+
+      <!-- 6a / 6b — both auto post -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div style="padding: 12px 16px; background: #e8f5e9; border-radius: 8px; border-left: 3px solid var(--ok);">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ok); margin-bottom: 4px;">6a</div>
+          <strong>自動 Post 到 Google Maps</strong><br><span style="font-size: 13px; color: var(--slate);">成功 → 寫 Sheet（不發 email）<br>失敗 → Email 該店店長 + cc IT</span>
+        </div>
+        <div style="padding: 12px 16px; background: #fff3e0; border-radius: 8px; border-left: 3px solid var(--warn);">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--warn); margin-bottom: 4px;">6b</div>
+          <strong>自動 Post 到 Google Maps</strong><br><span style="font-size: 13px; color: var(--slate);">成功 → Email 該店店長「追蹤客戶 + 回填 Sheet」<br>失敗 → Email 店長 + cc IT</span>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px;">
+        <div style="text-align: center; color: var(--sage); font-size: 18px;">↓</div>
+        <div style="text-align: center; color: var(--sage); font-size: 18px;">↓</div>
+      </div>
+
+      <!-- Step 7 -->
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="background: var(--green); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: 'JetBrains Mono', monospace; flex-shrink: 0;">7</div>
+        <div style="flex: 1; padding: 10px 16px; background: var(--green); color: var(--white); border-radius: 8px;">
+          所有狀態寫入 <strong>Google Sheet</strong>（review_id / public_reply_status / public_replied_at / case_status / 失敗原因）— 負評由店長追蹤後回填
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <h3>⏱ 回覆時機 detail（Decision 2 的參考）</h3>
+  <p style="font-size: 14px; color: var(--slate);">目前 cron = <strong>每 1 分鐘</strong>。客戶留評論最晚 60 秒看到 AI 回覆。詳細優缺請對照上方 Decision 2 三個選項。</p>
+</section>
+
+<!-- WHY -->
+<section class="section">
+  <div class="section-label">Why</div>
+  <h2>為什麼需要你 review</h2>
+  <p>我們已經串好「Google 評論自動爬 → AI 生成回覆 → 自動 post 到 GBP」的 pipeline。八德店 pilot 已 5/13 啟動跑著，<strong>tone 必須先過行銷主管 + 八德店主管的眼</strong>，確認 AI 生成的草稿符合車麗屋品牌口吻 + 八德店現場習慣。</p>
+  <div class="callout">
+    <h3>Joy directive · 2026-05-11</h3>
+    <p>「不要用很像機器人的回覆方式」</p>
+    <p style="margin-top:14px;">→ 我們把 AI prompt 校準成「客服 80% + 商業 20%」，並從八德店現有人工回覆 sample 抽 pattern。本份文件給你看 50 則對比，請判斷 AI 是否真做到。</p>
+  </div>
+</section>
+
+<!-- TONE 規範 -->
+<section class="section">
+  <div class="section-label">Tone Rules</div>
+  <h2>Tone 規範（AI prompt 內建 5 條）</h2>
+  <table class="rule-table">
+    <tr><th width="22%">原則</th><th width="38%" class="do">✓ AI 會這樣</th><th width="40%" class="dont">✗ AI 不會這樣</th></tr>
+    <tr>
+      <td><strong>不公式化</strong></td>
+      <td class="do">直接回應評論內容（「謝謝沛瑄收到這樣的好評」）</td>
+      <td class="dont">「親愛的顧客您好！」「敬愛的顧客」</td>
+    </tr>
+    <tr>
+      <td><strong>不賣萌</strong></td>
+      <td class="do">標點克制，每則最多 1 個驚嘆號</td>
+      <td class="dont">「~~」「~~~」連發、連續「！！！」</td>
+    </tr>
+    <tr>
+      <td><strong>字數對稱</strong></td>
+      <td class="do">短評回 30-60 字 / 長評回 60-200 字</td>
+      <td class="dont">每則都同樣 80 字模板</td>
+    </tr>
+    <tr>
+      <td><strong>個人化</strong></td>
+      <td class="do">客人提員工名→ 回覆必提，改用「姓+師傅」如「陳師傅」</td>
+      <td class="dont">「我們同仁」「服務人員」匿名稱呼</td>
+    </tr>
+    <tr>
+      <td><strong>客服 80% / 商業 20%</strong></td>
+      <td class="do">真誠感謝 + 接住評論細節 + 自然邀請再來</td>
+      <td class="dont">「全台 33 店歡迎光臨」品牌 plug</td>
+    </tr>
+  </table>
+</section>
+
+<!-- 紅線 -->
+<section class="section">
+  <div class="section-label">Red Lines</div>
+  <h2>負評紅線（&lt; 3 ★ 5 條）</h2>
+  <table class="rule-table">
+    <tr><th width="22%">紅線</th><th width="78%" class="dont">✗ 絕對禁止</th></tr>
+    <tr><td><strong>不認錯</strong></td><td class="dont">「確實是我們的不足」「這是我們的疏失」← 法務風險</td></tr>
+    <tr><td><strong>不補償</strong></td><td class="dont">折扣 / 退款 / 禮品 / 半價（違 Google policy incentivized）</td></tr>
+    <tr><td><strong>不複述指控</strong></td><td class="dont">複述客人寫的指控 = 在公開頁面把指控變事實</td></tr>
+    <tr><td><strong>不公開員工名</strong></td><td class="dont">負評提員工 → 改用部門 / 內部處理，不在公開回覆點名</td></tr>
+    <tr><td><strong>必含店家電話 + 店長署名</strong></td><td style="color: var(--ok);">✓ 改用「啟動內部調查」「將調閱相關紀錄釐清狀況」+「歡迎來電 03-2860858」+「陳店長 敬上」</td></tr>
+  </table>
+</section>
+
+<!-- 對比 SAMPLE -->
+<section class="section">
+  <div class="section-label">Comparison</div>
+  <h2>對比 50 則 sample</h2>
+  <p>左欄是客戶 Google 評論原文，中欄是<strong>八德店現有人工回覆</strong>，右欄是 <strong>AI 自動草稿</strong>。每則我們先做了自動 verdict（針對禁用詞 / placeholder 做初步判斷），最終由你決定。</p>
+  <p style="font-size: 13px; color: var(--slate); background: var(--cream); padding: 10px 14px; border-radius: 6px;">📌 <strong>關於「50/50 全自動 OK」</strong>：自動 verdict 只 check 禁用詞、placeholder 漏填、字數長度，<strong>不判斷品牌 tone</strong>。所以全綠是預期值 — 品牌 tone 是否符合請你親自判斷右欄 AI 草稿。</p>
+
+  <div class="filter-bar">
+    <div class="filter-group">
+      <button class="filter-btn" data-filter-type="star" data-filter-value="all">全部 ★</button>
+      <button class="filter-btn" data-filter-type="star" data-filter-value="5">5★</button>
+      <button class="filter-btn" data-filter-type="star" data-filter-value="4">4★</button>
+      <button class="filter-btn" data-filter-type="star" data-filter-value="2">2★</button>
+      <button class="filter-btn active" data-filter-type="star" data-filter-value="1">1★</button>
+    </div>
+    <div class="filter-group">
+      <button class="filter-btn active" data-filter-type="verdict" data-filter-value="all">全部 verdict</button>
+      <button class="filter-btn" data-filter-type="verdict" data-filter-value="ok">✓ 符合規範 (50)</button>
+      <button class="filter-btn" data-filter-type="verdict" data-filter-value="warn">! 需 review (0)</button>
+    </div>
+    <div class="filter-count" id="filter-count"></div>
+  </div>
+
+  <div id="sample-list"></div>
+</section>
+
+<!-- PROS/CONS -->
+<section class="section">
+  <div class="section-label">AI vs 現有人工</div>
+  <h2>對照</h2>
+  <div class="proscons">
+    <div class="proscons-card pro">
+      <h4>✓ AI 草稿強在</h4>
+      <ul>
+        <li><strong>無公式開頭</strong>：50 則完全沒「親愛的顧客您好」</li>
+        <li><strong>無賣萌標點</strong>：沒「~~」「~~~」連續驚嘆號</li>
+        <li><strong>負評處理一致</strong>：7 則 1-2 ★ 都遵守「不認錯 / 不複述指控 / 必含電話+店長署名」</li>
+        <li><strong>個人化</strong>：客人提員工名都正確接住（沛瑄/小馨/王師傅 etc.）</li>
+        <li><strong>字數對稱</strong>：「不錯」短評回 30-60 字，長評回 100-200 字</li>
+      </ul>
+    </div>
+    <div class="proscons-card con">
+      <h4>! AI 草稿弱在 / 需 review</h4>
+      <ul>
+        <li><strong>「無文字」5★ 千篇一律</strong>：17 則只給星沒寫字，AI 回的相似度高</li>
+        <li><strong>負評語句模板化</strong>：「對於您的不愉快體驗感到遺憾」「已請門市主管」反覆出現</li>
+        <li><strong>季節提醒</strong>：AI 沒帶「換季胎壓」「年前洗車」等時令話題 — Phase 2 再加，本 pilot 先不上</li>
+      </ul>
+      <div style="margin-top: 16px; padding: 12px 14px; background: #e8f5e9; border-radius: 6px; border-left: 3px solid var(--ok);">
+        <strong style="color: var(--ok);">✓ 為什麼 AI 不主動推銷「會員日 / LINE@ 優惠 / 保養折」</strong>
+        <p style="font-size: 13px; color: var(--slate); margin: 6px 0 0;">這是<strong>刻意設計</strong>。Google 官方政策明文要求業主回覆「Be conversational, not promotional」（不要在回覆裡推銷折扣 / 活動 / 加 LINE 送贈品），違反會影響 GBP 評等。AI prompt 已加 negative constraint 不寫推銷字眼。</p>
+        <p style="font-size: 11px; color: var(--sage); margin: 6px 0 0;">⭐⭐⭐⭐⭐ <a href="https://support.google.com/business/answer/3474122?hl=en" target="_blank" style="color: var(--sage);">Google Business Profile Help · Tips to reply to reviews</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- API COST -->
+<section class="section">
+  <div class="section-label">Cost</div>
+  <h2>Claude API 月成本估算</h2>
+  <p>用 <strong>Claude Haiku 4.5</strong> 模型（Anthropic 最新 fast tier）。</p>
+  <p>單次成本：每則評論 1 次 API call → 平均 <strong>NT$0.023</strong>（input 327 tokens, output 84 tokens）</p>
+  <p class="source">⭐⭐⭐⭐⭐ Anthropic 官網 · pricing $1/M input, $5/M output (<a href="https://www.anthropic.com/claude/haiku" target="_blank">source</a>) · USD/TWD = 31.37 (2026-05-11)</p>
+
+  <table class="cost-table">
+    <tr>
+      <th>範圍</th><th>月評論量</th><th>月 API 成本</th><th>年 API 成本</th>
+    </tr>
+    <tr>
+      <td><strong>八德店</strong>（pilot）</td>
+      <td>~10 則 (近 6 個月 active 樣本)</td>
+      <td class="num">NT$0.23</td>
+      <td class="num">NT$2.8</td>
+    </tr>
+    <tr>
+      <td><strong>桃園 4 店</strong>（八德+楷梅+中壢+春日）</td>
+      <td>40 則</td>
+      <td class="num">NT$0.94</td>
+      <td class="num">NT$11.2</td>
+    </tr>
+    <tr>
+      <td><strong>33 店全鋪</strong></td>
+      <td>512 則 (主提案 estimate)</td>
+      <td class="num">NT$12.0</td>
+      <td class="num">NT$144</td>
+    </tr>
+  </table>
+
+  <div class="callout">
+    <h3>對照</h3>
+    <p>主提案 estimate：人工 47.6 小時/月 處理評論 ≈ 年 <strong>NT$140k</strong> 人力成本</p>
+    <p>AI 33 店年 API 成本 ≈ <strong>NT$144</strong>（人力 <strong>0.1%</strong>）</p>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="section">
+  <div class="section-label">Next Steps</div>
+  <h2>下一步 timeline</h2>
+  <div class="timeline">
+    <div class="timeline-step">
+      <div class="timeline-date">5/13</div>
+      <div class="timeline-text"><strong>✓ 八德 pilot 已啟動</strong> · Workflow A 在跑：cron 抓新評論 → AI 生成 → post 到 GBP + Sheet 記錄</div>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-date">5/12-15</div>
+      <div class="timeline-text"><strong>行銷主管 + 八德店主管 review</strong> · 回答 <strong>4 個 Decision</strong>（tone / 速度 / 夜間靜默 / 客訴反饋 channel），<strong>5/15（週五）23:59 前</strong>回 Joy LINE</div>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-date">5/16</div>
+      <div class="timeline-text"><strong>套用調整</strong> · Joy 依兩位主管回覆 tune AI prompt + post 延遲 + 夜間靜默</div>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-date">5/13-24</div>
+      <div class="timeline-text"><strong>14 天觀察期</strong> · Joy 每天看 Sheet 5-10 則 AI 草稿 vs 客戶反應 + 紀錄 diff</div>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-date">5/25</div>
+      <div class="timeline-text"><strong>Pilot review · 4 條驗收 KPI</strong>
+        <ul style="margin: 8px 0 0; padding-left: 20px; font-size: 14px; color: var(--slate);">
+          <li>AI 草稿通過率 ≥ <strong>90%</strong>（Joy 主觀 review 50 則新評論）</li>
+          <li>無客戶投訴「像機器人」「冒犯」（Sheet 標記 ≤ 1 件）</li>
+          <li>&lt; 3★ 店長 follow-up 完成率 <strong>100%</strong>（負評必有人接 + 回填 Sheet）</li>
+          <li>真實客戶 reply 比例 ≤ <strong>5%</strong> 表達「看出 AI」</li>
+        </ul>
+        <p style="font-size: 13px; color: var(--sage); margin: 8px 0 0;">4 條全過 → 桃園 4 店擴張；任 1 條失敗 → 調 prompt 重跑 7 天</p>
+      </div>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-date">5/26-6/9</div>
+      <div class="timeline-text"><strong>Phase 2 起步 · Workflow A 擴展桃園 4 店</strong>（八德 + 楷梅 + 中壢 + 春日）· tune prompt 適配各店 tone</div>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-date">6/10-6/30</div>
+      <div class="timeline-text"><strong>Phase 2 主建 · Workflow A 擴展 33 店 + Workflow B / C 上線</strong>
+        <ul style="margin: 8px 0 0; padding-left: 20px; font-size: 14px; color: var(--slate);">
+          <li><strong>Workflow A</strong>：33 店路由資料填齊 → pull 33 店評論自動分流 + 自動回覆</li>
+          <li><strong>Workflow B</strong>（保底掃描）：每小時掃一次防漏，Workflow A 漏抓時補抓</li>
+          <li><strong>Workflow C</strong>（客訴追蹤）：&lt;3★ Email 店長後 → 24hr 未處理自動提醒 → 72hr 未結案升級區督導</li>
+        </ul>
+      </div>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-date">7/1</div>
+      <div class="timeline-text"><strong>✓ 33 店全鋪 active</strong> · Workflow A + B + C 三條全跑 + GBP 連線穩定 + tone 校準完成 → 全面上線</div>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-date">8/1</div>
+      <div class="timeline-text"><strong>Workflow C 月報 v1</strong> · 各店評論數 / 平均星等 / 回覆率 / 客訴結案率 PDF 自動送 行銷部 + 各區督導</div>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-date">Phase 3<br>持續</div>
+      <div class="timeline-text"><strong>進階功能</strong>（維護期分批上）
+        <ul style="margin: 8px 0 0; padding-left: 20px; font-size: 14px; color: var(--slate);">
+          <li><strong>AI 風格學習</strong>：餵歷史人工回覆 → AI 越回越像車麗屋既有語氣</li>
+          <li><strong>風險閘門</strong>：敏感詞偵測（假貨 / 提告 / 消保官）→ 即使高星也轉人工 review</li>
+          <li><strong>LINE 通知升級</strong>：店長低星通知從 Email 升級 LINE，即時收到</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <h3>看完整 50 則互動 sample</h3>
+    <p>本文件已 embed 全 50 則。如需在 Google Sheet 進階篩選 / 排序：</p>
+    <p style="margin-top: 12px;"><a href="https://docs.google.com/spreadsheets/d/13YMjFawviA6zS0xMAQpxiN71eKZG3D-ZmA0m6H3KdkQ/edit#gid=758485772" target="_blank" style="color: var(--orange); text-decoration: underline;">→ 開啟 demo_compare Sheet</a></p>
+  </div>
+</section>
+
+<footer>
+  車麗屋汽車百貨 × JOMO Power · Tone Review v1 · 2026-05-12<br>
+  問題請聯絡 <a href="https://jomopower.com">Joy</a> / 久默商行
+</footer>
+
+<script>
+const SAMPLES = [{"created_at":"2026-05-10","star":5,"review_text":"職員沛瑄 不僅長得漂亮 服務也非常周到\n介紹的也非常詳細👍👍👍\n值得表揚💯👍","human_reply":"感謝您的肯定！沛瑄專員確實很用心在為每位客人服務，我們會將您的讚美轉達給她，這也是我們全體同仁持續進步的動力。歡迎下次再來八德店，我們期待為您服務！\n\n八德店全體同仁 敬上","ai_draft":"感謝您的肯定，沛瑄很開心能為您服務。我們全體團隊都會繼續用最用心的態度對待每位顧客，期待您下次光臨。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqlv9eh4zOpbXVbSsDY-_og9oBpP10teRniEvhHLXsdQ9FI-3jW6-ciAP-_l2-5jr3Z3WogB"},{"created_at":"2026-05-05","star":5,"review_text":"(無文字)","human_reply":"感謝您的五星好評！我們很開心能為您服務。您的支持是我們持續進步的動力，歡迎下次再來光臨，我們會繼續努力！\n\n八德店全體同仁 敬上","ai_draft":"感謝您對車麗屋的信任，給予五星評價。歡迎下次有需要時再來八德店，我們會竭誠為您服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqkJL_Ue41JhaEndxKQ6tXoukBB6q9f7umPhWjQc2-FphC_7scnRuCFkLJQSqtnV6CzRdcP_mQ"},{"created_at":"2026-05-02","star":5,"review_text":"不錯","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您的支持。我們很高興為您服務，期待下次還能繼續為您提供優質的服務體驗。歡迎再次光臨。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqlqxiDNs21UItWY2MIksdnj2hJpR9RsJZq4Y7kn_N6E6aeUYb0W5_EeJ2Gp2-MAdUOhum4x"},{"created_at":"2026-04-17","star":5,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您的五星評價，我們很開心為您服務。歡迎下次再來車麗屋，我們會繼續用心為您提供最好的服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqkx8C5wy1t9x59XdlwDRDn_84q-9UwoJjXHV4Oqoy5tbSXe_TYQORQraVpKFktlcHesLZ7KcQ"},{"created_at":"2026-04-12","star":5,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您給我們五星好評，誠摯邀請您下次有任何汽車用品需求，再度蒞臨車麗屋。我們會持續提升服務品質，為您服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqkbY4Jq_vS_avHLCkFrfaa1j0BJzcXC1kRcCz3WP4WuQ9lRHcxJuF9XTA35G3mzKV19BPloIA"},{"created_at":"2026-04-06","star":5,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您給予五星評價，我們非常開心能為您服務。歡迎下次繼續光臨車麗屋，我們會持續努力提供更好的服務品質。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqlOi5lZLF8tP7tpsrO2lP3t6Nuc4TUXJV08wor1t17CB_Rh8jzBz31rE_FttvI6XrQ9FAmS"},{"created_at":"2026-04-05","star":5,"review_text":"服務品質很好","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您的肯定，我們很高興能為您服務。車麗屋團隊一直秉持專業和用心的態度對待每位客人，希望下次還能為您服務，歡迎再來。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqmR9TKru-7GBaWtT1a6kf-atKuNZLRV_x4Timl3QlidV3MlUyjQXHezGGKuCj23ZeFtvqFAtA"},{"created_at":"2026-04-05","star":5,"review_text":"服務品質很好","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您給予五星評價，我們很開心能為您服務。您的肯定是我們持續進步的動力，歡迎下次再蒞臨八德店，我們會繼續努力提供最好的服務給您。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqk02umZdzzimRq2rsX82l6L9vf8HUtJLWMfvsUMVMkCkUzRWsB8EGSfgYuR9vq8XH9tLhsD"},{"created_at":"2026-03-16","star":5,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您給我們5星的肯定，這是我們繼續努力的動力。歡迎您下次光臨八德店，我們會持續提供最好的服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqkylCOieiF7tsInK_x4Dc3_MwVF3Ume_g1P5x0uKL0jowy53w_eCyttVi-ct-6W3_88FME2qg"},{"created_at":"2026-03-08","star":5,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您給予五星好評，非常開心能為您服務。歡迎下次有任何汽車用品需求時再來光臨，我們期待為您服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqnRLijPmf0Vvwi7JY4F3Z5aRNgvS5_8084UfePheYbB48qwd_4Nk7FMY1QW7ujx97H3xIOw"},{"created_at":"2026-03-07","star":5,"review_text":"因為雨刷有問題來這裡換新的，服務人員態度極好，有問題也耐心解答，讚👍🏻","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您的信任，很開心我們的服務讓您滿意。下次雨刷或其他用品需要更換時，歡迎再來找我們，我們會繼續用心為您服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqmLf9Ws4CeK2Lr9Y5YBdpvhLbxdfOpRDkfjg1tdvy9hOtY0tZUmxAPMPGnHItp9l639DCVY"},{"created_at":"2026-03-04","star":5,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您給予五星肯定，我們深感榮幸。歡迎您下次有需要時再來八德店，我們會持續用心為您服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqmqu7vfQI7k7uziDNP3ofd3QVAGb64j08nRkNXeRKHwzMVzWlfcHoNagLdT7jUq8p4OqQAPVA"},{"created_at":"2026-02-18","star":5,"review_text":"好玩！便宜！讚！","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您的支持！很開心能為您服務。我們致力於提供好的產品和親切的服務，歡迎下次再來逛逛。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqk6GbtosJSsh7Nd5eGmlhCOZ9OQng6H6xaLIknXRD-rxLKcliU61Olv0g5sRPGq2fJ8osSt"},{"created_at":"2026-02-16","star":5,"review_text":"除夕出門突然發現儀表板顯示胎壓不足，幸好遇見專業又細心的師傅，給予維修和檢測，讓我們能夠安心過好年🥹 真的很感謝！ 想直接給10星🌟🌟🌟🌟🌟🌟","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您的信任與支持！很開心能在除夕幫助您解決胎壓問題，讓您和家人安心過好年。我們的師傅們也很高興為您服務。期待下次再見面，祝新年快樂！\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqkpJqdkBpjZX2Bs3rzMbRMq0TtsxzNsSTsCXthZ9rN8N04TYnVuNIxb6nk7svzT9KJxmmtnbw"},{"created_at":"2026-02-09","star":5,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您給予五星評價，我們感到非常榮幸。歡迎您下次繼續蒞臨車麗屋，讓我們為您服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqnfWe5jBL3t0xBT_iVbIN1NOT6o6f2sMiNeV3lPqcXqqf0yd0a2r1xML-5DK65yk0RIjWxXJA"},{"created_at":"2026-02-07","star":5,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您給予五星評價，我們非常開心能為您服務。歡迎下次繼續光臨車麗屋，我們會持續努力提供最好的服務品質。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqnYe2Z7g5hsQ5JcpXymkEGWij0EAy-P4j6dOJeM7X-pV_3PzqdpAN787mCq9nkfDX8lyVeo4g"},{"created_at":"2026-01-18","star":5,"review_text":"服務品質超讚👍👍👍","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您給我們5星的肯定，我們很開心能為您服務。您的支持是我們繼續進步的動力，歡迎下次再來光臨。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqkneZX7IJylrOOYL4j-mQ3vnQml0Vr0NDVsqbIlSQHAmhYDGQsNXjwP6ujI5MrMIoLwmacD"},{"created_at":"2026-01-14","star":5,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您蒞臨車麗屋八德店消費，很高興為您服務。歡迎下次再來，我們期待與您再次見面。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqkHVyvZJO0jiA6F99juw0qR3tuIQFQZ6cXqZP2uxjr3bmAOnllDYFc3QECgGtmC8oVEM6kAOg"},{"created_at":"2026-01-04","star":5,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您的五星評價，我們深感榮幸。歡迎下次繼續蒞臨車麗屋，為您服務是我們的榮幸。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqnkZhu6KQX78j-xDfqGvMycn9fqzi-sD2YH5_gNNceSpXngH_VhVNqX8jpiaFkMhfB6p2jNaQ"},{"created_at":"2025-12-20","star":5,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您給予五星好評，我們很開心為您服務。歡迎下次繼續光臨車麗屋，我們會持續努力提供最好的服務品質。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqkkUb2WghV7AgKCglc2-RKKr77wjAhK8EjSFnRHJyNmFxHdxAQOSeR9OpWDCUQ1k1M-ua0F"},{"created_at":"2025-12-19","star":5,"review_text":"感謝協助更換雨刷\n原本用PIAA\n這次換Sparco變得超安靜","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"謝謝您的肯定！很開心能為您服務，Sparco雨刷的靜音效果確實不錯。歡迎下次有任何汽車用品需求再來找我們，期待為您服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqnFnS3bk0bhD6Lakz_B6Q0urI9t_D7whM0cEgXKgNfwTGpj6RJqR1HMLhlRIiOzbly4sEAw"},{"created_at":"2025-12-14","star":5,"review_text":"這裡的修理速度快，對顧客親切詳合","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您的肯定！我們很高興為您提供快速又親切的服務。歡迎下次再來八德店，我們會繼續為您用心服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqn-1iwkpO9hpXcHJtaj9Ha83E0cw-cXgJYXH8w12ReF5vKpf0xoA0dMmIivLb7_duzaZKXaaQ"},{"created_at":"2025-12-05","star":5,"review_text":"車麗屋汽車百貨八德店廠長人善修車技術更讚值得推薦","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您的信任與支持，很開心為您服務。我們的團隊會持續提升服務品質，歡迎下次有任何汽車百貨需求再來找我們。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqlsyohZNGHgcIi835Tfnixm1115X3CXxo5c_3OqSmsXqtu3gf311QW0l3nai82cfowiTF5M"},{"created_at":"2025-11-26","star":5,"review_text":"服務態度很好","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您的肯定，我們的團隊很高興能為您服務。歡迎下次有任何汽車用品的需求，再到八德店找我們，謝謝光臨。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqkdl7B2r9ueBRzZehUOs0GsSQ-RmQm6qB9IxE9GzrhTe0sgN2i9CPd93YZogjESruW_JDinCw"},{"created_at":"2025-11-26","star":5,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您給予五星評價，我們非常開心能為您服務。歡迎下次繼續光臨車麗屋八德店，期待為您提供更好的服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqn0mwdveA3AGwPHxta4IWgP7fptC0-4_rdxtI_K6uZS9EK7xU1B6yzbyvy91llt8IR8puZiMA"},{"created_at":"2025-11-20","star":5,"review_text":"還不錯","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您的支持。歡迎下次再來車麗屋，我們會持續努力提供最好的服務給您。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqk4IF7LvTpPJKzw0ch7L209oXeQyvq3GAMWoRlNpBlCDwYPRjRvxuLxKJeRHetrCsSkMv9DcA"},{"created_at":"2025-11-16","star":5,"review_text":"服務人員很專業會幫忙安裝，不適用的東西，也不會勉強硬要介紹或強迫購買喔！","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您的信任與支持！我們的團隊一直以專業服務和尊重客戶需求為目標，很開心能為您提供滿意的體驗。歡迎下次再來。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqlFDNt82LpJjpLlWkiceqE19v6jeghcQxDNn6vhbTYZSy_sVr-hCn-VkAkCfT5WSh7CfSHJzQ"},{"created_at":"2025-11-14","star":5,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您給予我們五星評價，這是我們全體同仁的動力。歡迎下次繼續光臨八德店，我們會持續提供最好的服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqlp8smD88BasnQEb6H15wnvmlew1Y-In6Qy12yONQXrWCR1y5E0ips3Q_9gk31EdynX85vKiw"},{"created_at":"2025-11-05","star":5,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您給予五星評價，非常開心為您服務。歡迎下次有任何汽車用品需求再來找我們，我們會繼續為您提供最好的服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqlKsvEKsKoogXMTvIL3juvVSn6-Qq6ulUherwqu-RaERRYIOc_cz8dkSN7Wfe25tfunLCl2OA"},{"created_at":"2025-11-03","star":5,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您對車麗屋的信任與支持，很高興能為您服務。歡迎下次有任何汽車用品需求時，再次光臨我們八德店，我們將竭誠為您服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqlOxG0aUTfG9BTL9Kj9nQ5hd4ZgMmmy8FxKqyPYxw5THq-8vn56YhXtpCM0tda__TzuoRQpSQ"},{"created_at":"2025-11-02","star":5,"review_text":"服務很好 line@領優惠卷 拿贈品","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您的支持和5星評價，很高興為您服務。歡迎持續透過LINE@領優惠卷和贈品，下次來店我們會更用心為您服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqlhwgJ6b7EO4fgnho_ztjElfSndHKrNMm4zAMJSwpq9xLY4zi4J7VJi4wOcogCwx0T1EWU0iw"},{"created_at":"2025-11-02","star":5,"review_text":"服務一級棒\n蘇小姐服務很好讚","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝蘇小姐的服務獲得您的肯定，這是我們全體同仁的動力。歡迎您下次繼續蒞臨車麗屋，我們會持續為您提供優質的服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqky0kZk9pnv6sLknoP4BpLodMyZdypkiO_D5uglmBIEZmofDTJcTzLzflI3FAqCasGdrTfR3w"},{"created_at":"2025-11-01","star":5,"review_text":"讚讚","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您的五星好評，我們很開心能為您服務。歡迎下次再來車麗屋，我們會繼續為您提供最好的服務品質。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqk0wqA56ep5rjLHPU9AFDJs3jUvJBkYj8nhzyJAlbRJvFKtbMiytwVQIOrknHOkyg2QgU2lxA"},{"created_at":"2024-05-06","star":5,"review_text":"(無文字)","human_reply":"感謝您的支持。期待您再度光臨!","ai_draft":"感謝您給予五星評價，我們深感榮幸。歡迎下次有需要時再來車麗屋，讓我們為您服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqmi6r9tAKLGscvjD_P_63QT_XRw_2IzzwKUv4muXu-AjyJDKTRr29Aseyj_SwPESv8O4FMI4g"},{"created_at":"2020-03-04","star":5,"review_text":"門市人員親切，現場人專業。","human_reply":"感謝您對我們的評論！","ai_draft":"感謝您的高評價，很開心能為您服務。我們的團隊確實都很用心為客人解答，希望您對購買的商品滿意。歡迎下次有任何需要再來找我們。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqmePwT6AUNsybzBNYko4IV8e_jdIf29QwjCV7507vg2gK88m7FKumguatJ3kkOoVeGuPmyX6g"},{"created_at":"2026-03-17","star":4,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您蒞臨車麗屋八德店，很高興為您服務。如果有任何需要改進的地方，歡迎告訴我們，我們會持續努力。期待下次為您服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqld32dKZSPllfn-tdTGZopzJSK82Mi9VUuyi1_EBhufyBbBVM9Bpy7X9rVPcQfV6X_zmtk7"},{"created_at":"2026-03-14","star":4,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您來車麗屋八德店消費，給予我們4星的肯定。若有任何問題或建議，歡迎下次蒞臨時告訴我們，我們會持續改進服務品質。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqmoG2kD7NAMiSKFV_lQh_KhivrpkvE-nkEk_fcXTuTikEkRji6-Cj-b87KCJ1ldn6M24im5"},{"created_at":"2026-01-11","star":4,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您蒞臨車麗屋八德店，很高興為您服務。期待下次再為您效勞，歡迎常來。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqnEUn7Ndw5pPNnSUIWAQed-p4JQGIgr5GP-oiLeMb34qyY2bjnFyEmM-pc8vWr7V9-pjFCUHA"},{"created_at":"2025-11-30","star":4,"review_text":"(無文字)","human_reply":"感謝您的支持。期待您再度光臨!","ai_draft":"感謝您給我們4星評價！您的支持是我們進步的動力，期待下次為您服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqnIM_e2Qn16tjLEItrq4tgDeoX2mSl7X6Wd6YG6zesEbjWK2lhzHMUlXuusM-ykApqROZhj"},{"created_at":"2025-11-09","star":4,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您給予我們4星的評價，這對我們團隊是很大的鼓勵。歡迎下次有需要時再光臨本店，我們會持續努力提升服務品質。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqmI5uz8HO75zvINabai0kRub3wEd3c_3mNYbRAGdrF7fFwRoLnLS7o4IxpkQIUetkoyxc_C5Q"},{"created_at":"2025-11-01","star":4,"review_text":"(無文字)","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您給予4星的肯定。我們會持續努力提升服務品質，期待下次為您服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqklplMoscLxuTIuvetpti9kNLwCKQzmPh91Lz7-tl-obahDa2l-BKxL8ZZCVYSk2-cfGcoKxQ"},{"created_at":"2023-01-27","star":4,"review_text":"(無文字)","human_reply":"感謝您給予4星評論，期待您再度光臨!感謝您的支持~~","ai_draft":"感謝您對我們的支持與肯定。歡迎下次有汽車百貨需求時再來光臨，我們會持續為您提供更好的服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqmfYjo03dGCPkkAlYKQ2-RivugdMhfljpm-bBdflymi2FreypnfeqjTtZtaiKiKbO7u3PVHoQ"},{"created_at":"2018-09-25","star":4,"review_text":"這次晚上去打氮氣，裡面進出車有點多，技師雖然很忙還是很快速幫忙處理。","human_reply":"親愛的顧客您好!感謝您的評價~~\n寶貝您的愛車就到車麗屋八德店~\n歡迎再次光臨~~感謝您","ai_draft":"感謝您來車麗屋，很高興我們的技師能在忙碌中還為您快速服務。我們會持續努力提升服務品質，期待下次再為您服務。\n\n八德店全體同仁 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqkbSPsCRAE4xvhE1pR3zLuH_zY68ijP2CBN9rrZDN5j1UGQKjKFMoSlLkfM4YqWSl8CZEroQA"},{"created_at":"2025-11-09","star":2,"review_text":"(無文字)","human_reply":"親愛的顧客您好! 您的反應我們收到了! 本次對於未能提供滿意五顆星服務，在此向您致上最深的歉意，我們若有做不好或能在改進的地方，懇請您!致電告訴我們 03-286-0858 門市主管 蘇組長","ai_draft":"感謝您對車麗屋的評價。看到低星評分，我們感到遺憾。為了了解您的用車體驗及改進方向，誠摯邀請您於營業時間內撥電 03-2860858 與我們聯繫，讓我們有機會為您服務。\n\n車麗屋汽車百貨八德店 陳店長 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqmOXHofdBqf1Wx9NZXArRk876iq6NhNwfUcdJx7F5MpaXrKoonE3zloyBfGDFkGy1NBrLtqUw"},{"created_at":"2026-02-20","star":1,"review_text":"就換輪胎可以，談維修還不夠格。","human_reply":"老闆您好，非常不好意思造成您的不愉快\n希望您可以找到適合您的保養廠替您服務\n感謝您光臨車麗屋八德店","ai_draft":"感謝您的意見回饋。對於您的不好體驗，我們深感遺憾。您提出的看法我們已記錄下來，將啟動內部調查，了解相關服務細節。歡迎在營業時間內撥打 03-2860858 與我們聯繫，讓我們有機會為您服務。\n\n車麗屋汽車百貨八德店 陳店長 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOql3ss0HDNI5Ll_WtVs6604ST7YvXM4eKm9a3rl8SdqVAQZqAsh8Qk70waeRVEei2-NYv-RebQ"},{"created_at":"2026-02-18","star":1,"review_text":"服務很差，不會想再走進的店⋯\n定位機器壞了是不是可以先告知預約換輪胎的的客人而不是人到現場才丟一句壞了，要客人改時間，問改幾時回答要看我們機器幾時修好⋯沒有後續處理方式例如修好了聯繫預約之類，也沒有一句抱歉或不好意思，只有擺著一張臉好像問題都是客人的，機器壞了可以被接受但後續的處理態度真的讓人滿滿的問號","human_reply":"(無文字)","ai_draft":"感謝您的反饋。對於您預約時遇到的不便，我們深表遺憾。我們已請門市主管詳細了解當日的服務情況，並將調閱相關紀錄釐清狀況，確保改善服務流程。若您願意進一步溝通，歡迎營業時間內致電 03-2860858，我們會認真聽取您的建議。\n\n車麗屋汽車百貨八德店 陳店長 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqkRIXHMWEOwLSyfYkwX5IkqOgWnaJgjBsihRMeLl6s_jDuF0gmju6C7uHynlCWV7Jix8-48"},{"created_at":"2026-01-19","star":1,"review_text":"負責Etag安裝小姐很不ok，要裝車牌框etag，一直說”不行，你的車只能貼前檔”。問為什麼？又只會跳針說”公司規定”。回她感應不到的話，etag也會車牌辨識,再不行，我自己再付錢買前檔的貼在我的金屬隔熱紙上，依舊跳針”公司規定不行”。（遠通那邊公告規定這台車不行裝？）。換去另一家景文，二話不說立刻安裝車牌型。後續etag感應、開關社區門也正常","human_reply":"(無文字)","ai_draft":"感謝您的評論，對於您在本店的服務體驗不滿意，我們深感遺憾。針對您提及的Etag安裝狀況，已請門市主管詳細了解相關服務過程與溝通細節，同時將調閱當日紀錄釐清狀況。我們重視每位客戶的意見，期盼能改進服務品質。歡迎營業時間內來電03-2860858與我們聯繫。\n\n車麗屋汽車百貨八德店 陳店長 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqmo7aaW4GSeow4b6y4IMCSOOnukC2MSrVamZDbPvXCcaRh93_r19ngODpiqqY6DViqmm_Ww"},{"created_at":"2025-12-22","star":1,"review_text":"好好說話不行嗎？ 我有消費又不是去亂的\n以前也有一次花過五萬多的","human_reply":"(無文字)","ai_draft":"感謝您的留言，對於您的不愉快經驗感到遺憾。我們已請門市主管詳細了解當時的狀況，並將調閱相關紀錄釐清細節。您的意見對我們很重要，歡迎營業時間內致電03-2860858，讓我們有機會改善服務。\n\n車麗屋汽車百貨八德店 陳店長 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqnIi7LFqaVHj45R-GCVkSa8cmXzguXYygqy_WoACTrUcAXegk0_aMr3LbbEEdKPWYH6hsQK"},{"created_at":"2025-12-04","star":1,"review_text":"很差的服務，工作人員態度惡劣，建議以後不要到此消費","human_reply":"親愛的顧客您好! 您的反應我們收到了! 本次對於未能提供滿意五顆星服務，在此向您致上最深的歉意，我們若有做不好或能在改進的地方，懇請您!致電告訴我們 03-286-0858 門市主管 陳組長","ai_draft":"感謝您的反饋，我們對您的不愉快體驗感到遺憾。您提及的服務情況，我們已請門市主管詳細了解並啟動內部調查。若您願意提供更多細節，歡迎營業時間內來電 03-2860858，我們希望能釐清狀況並改進服務。\n\n車麗屋汽車百貨八德店 陳店長 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqn_sf_reuouTSiCJWzUOaryWT8JrbjG_kC8QAKL2dgLEZJGloNaYzItr_SuZby7FFOXBC-J2g"},{"created_at":"2025-11-17","star":1,"review_text":"打電話問一下輪胎什麼時候到貨 接電話小姐太多超差","human_reply":"親愛的顧客您好! 您的反應我們收到了! 本次對於未能提供滿意五顆星服務，在此向您致上最深的歉意，我們若有做不好或能在改進的地方，懇請您!致電告訴我們 03-286-0858 門市主管 陳組長","ai_draft":"感謝您的反饋。我們對您的體驗感到遺憾，已請門市主管了解當時接電話同仁的服務狀況，並將加強客服溝通訓練。歡迎營業時間內撥電 03-2860858 與我們進一步溝通，我們會認真改進。\n\n車麗屋汽車百貨八德店 陳店長 敬上","verdict":"ok","verdict_label":"符合規範","review_id":"AbFvOqlbB6ztcfMCHxgWtTaeBpN59y7iBhFP3FDNyoNPQi3n9TV61FkfTQIqQkgpUY6VKIrbi8ld1w"}];
+
+function render() {
+  const starFilter = document.querySelector('.filter-btn.active[data-filter-type="star"]').dataset.filterValue;
+  const verdictFilter = document.querySelector('.filter-btn.active[data-filter-type="verdict"]').dataset.filterValue;
+  let filtered = SAMPLES;
+  if (starFilter !== 'all') {
+    filtered = filtered.filter(s => String(s.star) === starFilter);
+  }
+  if (verdictFilter !== 'all') {
+    filtered = filtered.filter(s => s.verdict === verdictFilter);
+  }
+
+  document.getElementById('filter-count').textContent = `顯示 ${filtered.length} / ${SAMPLES.length}`;
+
+  const html = filtered.map(s => {
+    const starLow = s.star < 3 ? 'low' : '';
+    const verdictMap = { ok: '✓ 符合規範', warn: '! 需 review', error: '✗ 生成失敗' };
+    return `
+      <div class="sample verdict-${s.verdict}">
+        <div class="sample-meta">
+          <span class="sample-star ${starLow}">${s.star}★</span>
+          <span>${s.created_at}</span>
+          <span class="sample-verdict ${s.verdict}">${verdictMap[s.verdict] || s.verdict_label}</span>
+          <span style="margin-left:auto; font-size:11px; color:#aaa;">id: ${s.review_id.substring(0, 16)}…</span>
+        </div>
+        <div class="sample-cols">
+          <div class="sample-col review">
+            <h5>客戶評論</h5>
+            <div class="text">${escapeHtml(s.review_text || '(無文字)')}</div>
+          </div>
+          <div class="sample-col human">
+            <h5>現有人工回覆</h5>
+            <div class="text">${escapeHtml(s.human_reply || '(沒人工回覆)')}</div>
+          </div>
+          <div class="sample-col ai">
+            <h5>AI 自動草稿</h5>
+            <div class="text">${escapeHtml(s.ai_draft || '(生成失敗)')}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('sample-list').innerHTML = html || '<p style="text-align:center; color:#aaa; padding: 40px;">無符合條件的 sample</p>';
+}
+
+function escapeHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const type = btn.dataset.filterType;
+    document.querySelectorAll(`.filter-btn[data-filter-type="${type}"]`).forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  });
+});
+
+render();
+</script>
+</body>
+</html>
