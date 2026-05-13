@@ -772,33 +772,15 @@ Phase 2 起 Workflow C 月報抓 Sheet 結案率
       <td class="do">真誠感謝 + 接住評論細節 + 自然邀請再來</td>
       <td class="dont">「全台 33 店歡迎光臨」品牌 plug</td>
     </tr>
-  </table>
-</section>
-
-<!-- TONE v2 5/13 補規則 -->
-<section class="section">
-  <div class="section-label">Tone Rules v2 — 5/13 補</div>
-  <h2>5/13 補規則（從真實 production 抓出的 edge case）</h2>
-  <p style="font-size: 14px; color: var(--slate); margin-bottom: 16px;">
-    八德 pilot 5/13 啟動後從真實評論抓出 3 個 edge case，AI prompt 已 hot-fix 更新（fresh agent 第 5 輪 FULL PASS 驗證）：
-  </p>
-
-  <table class="rule-table">
-    <tr><th width="22%">新增規則</th><th width="38%" class="do">✓ AI 會這樣</th><th width="40%" class="dont">✗ AI 不會這樣</th></tr>
     <tr>
       <td><strong>Sentiment 分類（&lt;3★）</strong></td>
-      <td class="do">
-        判斷評論文字情緒分 3 種：<br>
-        (A) 明確負面 → 表遺憾不認錯<br>
-        (B) 正面文字 + 低星 → 感謝肯定避免道歉<br>
-        (C) 模糊 / 只給星 → 表遺憾邀請聯繫
-      </td>
-      <td class="dont">不論文字內容，一律「對不愉快體驗道歉」（會踩到 Ariel 例「很不錯的店跟服務」+ 1 ★ 尷尬 case）</td>
+      <td class="do">判斷評論文字情緒分 3 種：(A) 明確負面→表遺憾不認錯 / (B) 正面文字+低星→感謝肯定避免道歉 / (C) 模糊只給星→表遺憾邀請聯繫</td>
+      <td class="dont">不論文字內容一律「對不愉快體驗道歉」（會踩到「很不錯的店」+1★ 尷尬 case）</td>
     </tr>
     <tr>
-      <td><strong>不認可贈品 / 活動 / 折扣</strong></td>
+      <td><strong>不認可贈品 / 活動</strong></td>
       <td class="do">輕帶過「謝謝您參與這個活動」「謝謝您喜歡」</td>
-      <td class="dont">「甜甜圈已備好歡迎來領」「會員日五折優惠」等承諾或確認具體贈品 / 兌換方式（同時違 Google policy「Be conversational, not promotional」）</td>
+      <td class="dont">「甜甜圈已備好歡迎來領」等承諾具體贈品 / 兌換方式</td>
     </tr>
     <tr>
       <td><strong>台灣口語化</strong></td>
@@ -806,13 +788,6 @@ Phase 2 起 Workflow C 月報抓 Sheet 結案率
       <td class="dont">書面語「您的用詞」「言詞」</td>
     </tr>
   </table>
-
-  <div class="callout" style="margin-top: 24px;">
-    <h3>📌 已知 limitation（pilot 階段不處理）</h3>
-    <p><strong>客戶修改評論文字 / 星數 → AI 不會重新生成回覆</strong>。</p>
-    <p>系統以 review_id 過濾 — 同一則 review 處理過就 stuck。如客戶 5★ 改 1★，舊 AI 5★ 回覆會留著，文字 / 星數變動也不重抓。</p>
-    <p style="margin-top: 12px;">Pilot 階段（八德店 1 店）暫不處理 — 量小、troll 機率低。<strong>Phase 2（33 店全鋪）再評</strong>是否偵測 updateTime 重生回覆。</p>
-  </div>
 </section>
 
 <!-- 紅線 -->
