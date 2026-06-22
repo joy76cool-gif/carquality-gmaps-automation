@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>報價及合約書 · JOMO × 車麗屋</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a;
+  --border: #2a2a2a;
+  --muted: #6b6b6b;
+  --line: #d8d8d8;
+  --paper: #ffffff;
+  --accent: #1B4332;     /* JOMO 綠，做 accent */
+  --orange: #E76F51;     /* JOMO 橘，做 highlight */
+  --soft: #f7f5f0;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+@page {
+  size: A4 portrait;
+  margin: 14mm 16mm;
+}
+
+body {
+  font-family: 'Noto Sans TC', 'Helvetica Neue', Arial, sans-serif;
+  background: #e8e6e0;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 30px 0;
+}
+
+.sheet {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  background: var(--paper);
+  padding: 20mm 18mm;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  position: relative;
+}
+
+@media print {
+  body { background: white; padding: 0; }
+  .sheet { box-shadow: none; margin: 0; padding: 0; width: 100%; min-height: auto; }
+}
+
+/* ==================== HEADER ==================== */
+.hd {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 18px;
+  margin-bottom: 20px;
+}
+
+.hd-left .brand {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 1px;
+  line-height: 1;
+}
+
+.hd-left .brand-sub {
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 3px;
+  margin-top: 6px;
+}
+
+.hd-left .brand-tag {
+  font-size: 10px;
+  color: var(--orange);
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.hd-left .supplier-info {
+  margin-top: 14px;
+  font-size: 11.5px;
+  line-height: 1.8;
+  color: #333;
+}
+
+.hd-left .supplier-info .row {
+  display: flex;
+  gap: 8px;
+}
+
+.hd-left .supplier-info .lb {
+  color: var(--muted);
+  min-width: 50px;
+  font-weight: 500;
+}
+
+.hd-right {
+  text-align: right;
+}
+
+.hd-right .doc-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 8px;
+  color: var(--ink);
+  padding-right: 4px;
+  line-height: 1;
+}
+
+.hd-right .doc-title-en {
+  font-size: 10px;
+  letter-spacing: 5px;
+  color: var(--muted);
+  margin-top: 4px;
+  padding-right: 8px;
+}
+
+.hd-right .doc-meta {
+  margin-top: 16px;
+  border: 1px solid var(--border);
+  font-size: 11.5px;
+  min-width: 220px;
+}
+
+.hd-right .doc-meta .row {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  border-bottom: 1px solid var(--line);
+}
+
+.hd-right .doc-meta .row:last-child { border-bottom: none; }
+
+.hd-right .doc-meta .lb {
+  background: var(--soft);
+  padding: 6px 10px;
+  color: var(--muted);
+  border-right: 1px solid var(--line);
+  font-weight: 500;
+}
+
+.hd-right .doc-meta .v {
+  padding: 6px 10px;
+  text-align: right;
+  font-weight: 500;
+}
+
+/* ==================== CUSTOMER BLOCK ==================== */
+.customer {
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.customer .ct-hd {
+  background: var(--accent);
+  color: white;
+  padding: 6px 14px;
+  font-size: 11px;
+  letter-spacing: 3px;
+  font-weight: 500;
+}
+
+.customer .ct-body {
+  padding: 12px 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 20px;
+  font-size: 12px;
+}
+
+.customer .ct-body .row {
+  display: flex;
+  gap: 10px;
+}
+
+.customer .ct-body .lb {
+  color: var(--muted);
+  min-width: 62px;
+}
+
+.customer .ct-body .v {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* ==================== SECTION TITLE ==================== */
+.sec-title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 22px 0 10px;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 4px;
+}
+
+.sec-title .ch {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 2px;
+}
+
+.sec-title .en {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.sec-title .acc {
+  flex: 1;
+  text-align: right;
+  font-size: 10px;
+  color: var(--orange);
+  font-family: 'Noto Sans TC', sans-serif;
+}
+
+/* ==================== ITEMS TABLE ==================== */
+.items {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.items thead th {
+  background: var(--accent);
+  color: white;
+  padding: 8px 10px;
+  font-weight: 500;
+  text-align: left;
+  border: 1px solid var(--accent);
+  letter-spacing: 1px;
+}
+
+.items thead th.c { text-align: center; }
+.items thead th.r { text-align: right; }
+
+.items tbody td {
+  padding: 12px 10px;
+  border: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.items tbody td.c { text-align: center; }
+.items tbody td.r { text-align: right; font-variant-numeric: tabular-nums; }
+
+.items tbody .name {
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 3px;
+  font-size: 12.5px;
+}
+
+.items tbody .desc {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.items tbody .strike {
+  color: #b5b5b5;
+  text-decoration: line-through;
+  font-size: 11px;
+}
+
+.items tbody .badge {
+  display: inline-block;
+  background: #fff3e0;
+  color: #c75a2f;
+  padding: 1px 7px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 500;
+  margin-top: 4px;
+  border: 1px solid #f1c9a8;
+}
+
+/* ==================== TOTALS ==================== */
+.totals {
+  margin-top: -1px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.totals-inner {
+  width: 320px;
+  border-collapse: collapse;
+}
+
+.totals-inner td {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  font-size: 12px;
+}
+
+.totals-inner td.lb {
+  background: var(--soft);
+  color: var(--muted);
+  text-align: right;
+  width: 130px;
+}
+
+.totals-inner td.v {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.totals-inner tr.grand td {
+  background: var(--accent);
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  border-color: var(--accent);
+}
+
+.totals-inner tr.grand td.v {
+  font-family: 'Noto Serif TC', serif;
+  letter-spacing: 1px;
+}
+
+/* ==================== MONTHLY PLANS ==================== */
+.plans {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.plan {
+  border: 1px solid var(--line);
+  padding: 10px 12px 12px;
+}
+
+.plan.rec {
+  border-color: var(--orange);
+  border-width: 1.5px;
+  background: #fffaf6;
+}
+
+.plan .plan-hd {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+  border-bottom: 1px dashed var(--line);
+  padding-bottom: 5px;
+}
+
+.plan .plan-name {
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.plan .plan-price {
+  font-family: 'Noto Serif TC', serif;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.plan .plan-desc {
+  font-size: 10.5px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.plan .rec-mark {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--orange);
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+/* ==================== TERMS ==================== */
+.terms {
+  border: 1px solid var(--line);
+  padding: 12px 16px;
+  margin-top: 6px;
+  font-size: 11.5px;
+  line-height: 1.75;
+}
+
+.terms ol {
+  counter-reset: t;
+  list-style: none;
+}
+
+.terms ol li {
+  counter-increment: t;
+  padding-left: 22px;
+  position: relative;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.terms ol li::before {
+  content: counter(t) ".";
+  position: absolute;
+  left: 0;
+  color: var(--muted);
+  font-weight: 500;
+  width: 18px;
+  text-align: right;
+}
+
+.terms ol li b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ==================== NOTE ==================== */
+.note-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: end;
+  margin-top: 22px;
+}
+
+.notes {
+  border: 1px solid var(--line);
+  padding: 10px 14px;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.7;
+  min-height: 110px;
+}
+
+.notes .nt {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--ink);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+/* ==================== SIGNATURE ==================== */
+.sigs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.sig-box {
+  border: 1px solid var(--ink);
+}
+
+.sig-hd {
+  background: var(--soft);
+  padding: 4px 10px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+  font-weight: 500;
+}
+
+.sig-body {
+  padding: 12px 14px;
+  min-height: 90px;
+  font-size: 11px;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sig-body .sig-name {
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.sig-body .sig-lines {
+  font-size: 10.5px;
+  color: var(--muted);
+  line-height: 2;
+}
+
+.sig-body .sig-lines .dot {
+  display: inline-block;
+  width: 140px;
+  border-bottom: 1px dotted var(--ink);
+  margin-left: 6px;
+  height: 14px;
+  vertical-align: bottom;
+}
+
+/* ==================== BRAND BLOCK ==================== */
+.brand-block {
+  margin-top: 24px;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #F7F5F0 0%, #ECEAE4 100%);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  display: grid;
+  grid-template-columns: 1.2fr 2fr 1.3fr;
+  gap: 28px;
+  align-items: center;
+}
+.brand-block .bb-logo {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 1px;
+  line-height: 1;
+}
+.brand-block .bb-tag {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--orange);
+  letter-spacing: 2px;
+  font-weight: 500;
+  font-style: italic;
+}
+.brand-block .bb-label {
+  font-size: 9px;
+  color: var(--orange);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.brand-block .bb-desc {
+  font-size: 11.5px;
+  color: var(--ink);
+  line-height: 1.65;
+}
+.brand-block .bb-links {
+  font-size: 11px;
+  color: var(--ink);
+  line-height: 1.8;
+}
+.brand-block .bb-mid {
+  padding-left: 24px;
+  border-left: 1px solid color-mix(in srgb, var(--accent) 15%, transparent);
+}
+.brand-block .bb-right {
+  padding-left: 24px;
+  border-left: 1px solid color-mix(in srgb, var(--accent) 15%, transparent);
+}
+
+/* ==================== FOOTER ==================== */
+.ft {
+  margin-top: 18px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+}
+
+.ft .seal {
+  font-size: 9px;
+  color: var(--orange);
+  letter-spacing: 2px;
+  padding: 2px 8px;
+  border: 1px dashed var(--orange);
+  border-radius: 3px;
+}
+
+/* watermark */
+.wm {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-20deg);
+  font-family: 'Noto Serif TC', serif;
+  font-size: 120px;
+  color: rgba(231, 111, 81, 0.06);
+  font-weight: 700;
+  letter-spacing: 8px;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 0;
+}
+
+.sheet > *:not(.wm) { position: relative; z-index: 1; }
+
+/* ==================== PRINT TOOLBAR（PChome 同款按鈕產 PDF）==================== */
+.toolbar {
+  width: 210mm;
+  max-width: 100%;
+  margin: 0 auto 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+.toolbar .hint { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+.toolbar .hint b { color: var(--accent); }
+.btn-pdf {
+  background: var(--orange);
+  color: #fff;
+  border: none;
+  padding: 13px 30px;
+  border-radius: 6px;
+  font-size: 14.5px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 4px 12px rgba(231,111,81,0.3);
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+.btn-pdf:hover { background: #d65f43; }
+@media print {
+  .no-print { display: none !important; }
+  .pagebreak { page-break-before: always; }
+  .items, .note-row, .sigs, .sig-box, .customer, .totals { page-break-inside: avoid; }
+  /* 整體壓縮成 2 頁、連續流 */
+  body { font-size: 9.6px; }
+  .hd { padding-bottom: 8px; margin-bottom: 9px; }
+  .hd-left .brand { font-size: 19px; }
+  .hd-left .brand-sub { margin-top: 3px; }
+  .hd-left .brand-tag { margin-top: 2px; }
+  .hd-left .supplier-info { margin-top: 7px; font-size: 9.5px; line-height: 1.5; }
+  .hd-right .doc-title { font-size: 22px; letter-spacing: 6px; }
+  .hd-right .doc-meta { margin-top: 10px; font-size: 10px; }
+  .hd-right .doc-meta .lb, .hd-right .doc-meta .v { padding: 4px 9px; }
+  .customer { margin-bottom: 9px; }
+  .customer .ct-hd { padding: 4px 12px; }
+  .customer .ct-body { padding: 6px 13px; font-size: 10px; }
+  .sec-title { margin: 9px 0 5px; padding-bottom: 3px; }
+  .sec-title .ch { font-size: 13px; }
+  .items thead th { padding: 5px 9px; }
+  .items tbody td { padding: 6px 9px; }
+  .items tbody .name { font-size: 10.5px; }
+  .items tbody .desc { font-size: 9px; line-height: 1.45; }
+  .items tbody .badge { margin-top: 2px; }
+  .totals-inner td { padding: 5px 11px; }
+  div[style*="未稅聲明"], .terms[style] { font-size: 9.5px; }
+  .terms { font-size: 8.6px; line-height: 1.32; padding: 7px 13px; }
+  .terms ol li { padding-top: 0; padding-bottom: 0; padding-left: 18px; }
+  .terms ol li::before { width: 15px; }
+  .note-row { margin-top: 9px; gap: 12px; }
+  .notes { padding: 8px 12px; min-height: auto; font-size: 9.5px; line-height: 1.5; }
+  .sigs { margin-top: 8px; }
+  .sig-body { min-height: 70px; padding: 9px 12px; }
+  div[style*="簽署效力"] { margin-top: 9px !important; padding: 8px 12px !important; font-size: 9.5px !important; }
+  .ft { margin-top: 9px; }
+}
+</style>
+</head>
+<body>
+
+<div class="toolbar no-print">
+  <div class="hint">點右邊按鈕 → 在列印視窗的「目的地」選 <b>「另存為 PDF」</b> → 存檔即可。<br>（按鈕本身不會出現在 PDF 上）</div>
+  <button class="btn-pdf" onclick="window.print()">🖨 產生 / 下載 PDF</button>
+</div>
+
+<div class="sheet">
+
+  <!-- ==================== HEADER ==================== -->
+  <div class="hd">
+    <div class="hd-left">
+      <div class="brand">JOMO<span style="color:var(--orange);">.</span></div>
+      <div class="brand-sub">FLOW YOUR BUSINESS</div>
+      <div class="brand-tag">AI Business Automation · 為企業打造 AI 流程自動化</div>
+
+      <div class="supplier-info">
+        <div class="row"><div class="lb">供應方</div><div>久默商行（籌備中）</div></div>
+        <div class="row"><div class="lb">負責人</div><div>Joy Cho</div></div>
+        <div class="row"><div class="lb">Email</div><div>joy@jomopower.com</div></div>
+        <div class="row"><div class="lb">網址</div><div>jomopower.com</div></div>
+      </div>
+    </div>
+
+    <div class="hd-right">
+      <div class="doc-title">報價及合約書</div>
+      <div class="doc-title-en">QUOTATION &amp; CONTRACT</div>
+
+      <div class="doc-meta">
+        <div class="row">
+          <div class="lb">報價編號</div>
+          <div class="v">Q-20260421-01</div>
+        </div>
+        <div class="row">
+          <div class="lb">報價日期</div>
+          <div class="v">2026 / 04 / 21</div>
+        </div>
+        <div class="row">
+          <div class="lb">有效期限</div>
+          <div class="v">2026 / 06 / 25</div>
+        </div>
+        <div class="row">
+          <div class="lb">幣別</div>
+          <div class="v">新台幣 TWD</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CUSTOMER ==================== -->
+  <div class="customer">
+    <div class="ct-hd">客戶資訊 &nbsp;·&nbsp; BILL TO</div>
+    <div class="ct-body">
+      <div class="row"><div class="lb">公司名稱</div><div class="v">車麗屋汽車百貨股份有限公司</div></div>
+      <div class="row"><div class="lb">統一編號</div><div class="v">12606833</div></div>
+      <div class="row"><div class="lb">專案名稱</div><div class="v">Google Maps 評論自動化系統（33 店）</div></div>
+      <div class="row"><div class="lb">階段</div><div class="v">Phase 1 · 系統建置</div></div>
+    </div>
+  </div>
+
+  <!-- ==================== ITEMS ==================== -->
+  <div class="sec-title">
+    <div class="ch">一、建置項目</div>
+    <div class="en">· PROJECT DELIVERABLES</div>
+    <div class="acc">單位：新台幣（未稅）</div>
+  </div>
+
+  <table class="items">
+    <thead>
+      <tr>
+        <th class="c" style="width:40px">項次</th>
+        <th>品名／規格</th>
+        <th class="c" style="width:50px">數量</th>
+        <th class="c" style="width:55px">單位</th>
+        <th class="r" style="width:95px">單價</th>
+        <th class="r" style="width:100px">金額</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="c">1</td>
+        <td>
+          <div class="name">顧問研調費</div>
+          <div class="desc">
+            33 店評論數據分析、客訴樣態分類、年損失試算、流程診斷報告
+          </div>
+          <span class="badge">策略合作價</span>
+        </td>
+        <td class="c">1</td>
+        <td class="c">式</td>
+        <td class="r"><span class="strike">24,000</span><br>0</td>
+        <td class="r">0</td>
+      </tr>
+      <tr>
+        <td class="c">2</td>
+        <td>
+          <div class="name">提案報告費</div>
+          <div class="desc">
+            完整解決方案提案、ROI 分析、流程圖、客戶滿意度模型
+          </div>
+          <span class="badge">策略合作價</span>
+        </td>
+        <td class="c">1</td>
+        <td class="c">式</td>
+        <td class="r"><span class="strike">30,000</span><br>0</td>
+        <td class="r">0</td>
+      </tr>
+      <tr>
+        <td class="c">3</td>
+        <td>
+          <div class="name">系統建置費</div>
+          <div class="desc">
+            n8n 三條工作流建置（評論路由／保底掃描／追蹤提醒）、Claude AI 回覆生成串接、
+            Google Sheet 資料庫建置、風險閘門設定、33 店上線部署、回覆模板建立
+          </div>
+        </td>
+        <td class="c">1</td>
+        <td class="c">式</td>
+        <td class="r">45,000</td>
+        <td class="r">45,000</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="totals">
+    <table class="totals-inner">
+      <tr>
+        <td class="lb">小計（未稅）</td>
+        <td class="v">NT$ 45,000</td>
+      </tr>
+      <tr>
+        <td class="lb">營業稅（5%）</td>
+        <td class="v">NT$ 2,250</td>
+      </tr>
+      <tr class="grand">
+        <td class="lb">應付總額（含稅）</td>
+        <td class="v" style="color:var(--orange)">NT$ 47,250</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Tax notice -->
+  <div style="margin-top:8px;padding:7px 12px;background:#fff8f3;border-left:3px solid var(--orange);font-size:11px;color:#6b4230;letter-spacing:0.3px">
+    <b style="color:var(--orange)">※ 未稅聲明</b>　本表所有金額為<b>未稅（不含 5% 營業稅）</b>，實際稅額依雙方合作形式另計，詳見下方條款。
+  </div>
+
+  <!-- ==================== KNOWLEDGE TRANSFER ==================== -->
+  <div class="sec-title">
+    <div class="ch">二、知識移轉（資訊部接手維運）</div>
+    <div class="en">· KNOWLEDGE TRANSFER</div>
+    <div class="acc">一次性 · 不收月費維護</div>
+  </div>
+
+  <table class="items">
+    <thead>
+      <tr>
+        <th class="c" style="width:40px">項次</th>
+        <th>品名／規格</th>
+        <th class="c" style="width:50px">數量</th>
+        <th class="c" style="width:55px">單位</th>
+        <th class="r" style="width:95px">單價</th>
+        <th class="r" style="width:100px">金額</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="c">1</td>
+        <td>
+          <div class="name">知識移轉 · 教育訓練</div>
+          <div class="desc">
+            1 場 × 3 小時教育訓練，完整交付系統操作手冊、n8n workflow 維運、AI Prompt 調整、串接新門市流程、故障排除文件，由車麗屋資訊部自行接手維運。<b>本案不收月費維護費。</b>
+          </div>
+        </td>
+        <td class="c">1</td>
+        <td class="c">式</td>
+        <td class="r">18,000</td>
+        <td class="r">18,000</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="totals">
+    <table class="totals-inner">
+      <tr>
+        <td class="lb">小計（未稅）</td>
+        <td class="v">NT$ 18,000</td>
+      </tr>
+      <tr>
+        <td class="lb">營業稅（5%）</td>
+        <td class="v">NT$ 900</td>
+      </tr>
+      <tr class="grand">
+        <td class="lb">含稅</td>
+        <td class="v" style="color:var(--orange)">NT$ 18,900</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ==================== OPERATING COST ==================== -->
+  <div class="sec-title">
+    <div class="ch">三、系統運行成本（貴司自付）</div>
+    <div class="en">· OPERATING COST · 非 JOMO 收費項目</div>
+  </div>
+
+  <div class="terms" style="font-size:11.5px">
+    n8n 雲端主機 + Claude AI API + Google API 配額，預估 <b>每月 NT$ 1,000 內</b>（依實際用量調整，由貴司直接支付給各 API 供應商，發票由供應商分別開立，非 JOMO 之收費範圍）。
+  </div>
+
+  <!-- ==================== TERMS ==================== -->
+  <div class="sec-title">
+    <div class="ch">四、付款與條款</div>
+    <div class="en">· TERMS &amp; CONDITIONS</div>
+  </div>
+
+  <div class="terms">
+    <ol>
+      <li><b>當事人與主體變更：</b>本合約初次簽署時，供應方為自然人 <b>Joy Cho</b> 個人。待「久默商行」完成商業登記後（預計 2026 年內），雙方以書面換文方式將供應方變更為「久默商行」，原合約權利義務承受不中斷。</li>
+      <li><b>付款條件：</b>本案一次性費用合計 NT$ 63,000（未稅，含系統建置費 + 知識移轉）。合約簽署後 7 日內收取 50%（訂金），系統上線驗收 + 知識移轉完成後 7 日內收取 50%（尾款）。客戶逾期付款達 14 日，供應方得暫停服務，已付款項不退。</li>
+      <li><b>驗收程序：</b>供應方書面通知驗收後，客戶應於 7 個工作天內完成驗收確認或提出具體書面異議；逾期未回覆視同驗收通過。</li>
+      <li><b>驗收標準：</b><b>已納入統一帳號並完成串接之門市</b>，系統連續正常運作 7 日，評論回覆率達 95%，客訴案件正確進入追蹤表。</li>
+      <li><b>系統上線日定義：</b>指<b>已納入統一帳號之門市全部完成部署並通過驗收標準之日</b>，由雙方書面確認為準。未納入統一帳號之門市，俟其納入後另行分批上線，不影響本案上線日之認定。</li>
+      <li><b>知識移轉：</b>1 場 × 3 小時教育訓練於系統上線後 30 日內完成，完整交付操作手冊與維運文件，完成後由車麗屋資訊部自行接手維運，<b>本案不收月費維護費</b>。</li>
+      <li><b>接手後支援：</b>知識移轉完成後系統由車麗屋資訊部維運。日後如需 JOMO 協助（新功能開發、重大改寫、跨系統串接、新門市大量擴增），依下方「變更管理」條款另行報價。</li>
+      <li><b>保固期：</b>系統上線後 <b>3 個月為免費保固期</b>；保固期滿後系統由車麗屋資訊部維運，JOMO 不另收月費。保固範圍限於：因系統本身設計缺陷或程式錯誤導致之功能失效。以下情形<b>不屬保固範圍</b>：(a) 第三方 API 變更（Google、Claude、n8n 等供應商）；(b) 客戶自行修改設定；(c) 網路、主機或第三方服務中斷；(d) 新增功能需求；(e) Prompt 語氣優化。</li>
+      <li><b>交付時程：</b>GBP API 權限通過 + 合約簽署後，依「每家測試成功才開通下一批」之原則分批上線。凡已納入統一 Google 帳號之門市，預計於合約簽署後 4 週內完成上線。</li>
+      <li><b>客戶配合事項：</b>客戶應確保<b>全部門市的 Google 商家檔案均納入同一管理帳號（car1.csteam@gmail.com）底下</b>，並於合約簽署後 14 日內提供尚未納入帳號之門市清單、品牌回覆風格規範、客訴升級聯絡人名單。門市未納入統一帳號者無法串接，該門市上線時程順延，不視為供應方違約。</li>
+      <li><b>第三方服務免責：</b>本系統依賴 Google Business Profile API、Claude API、n8n 主機等第三方服務。因第三方服務異動、中斷或政策變更所致之影響，供應方不負賠償責任，但應善意協助客戶尋求替代方案。</li>
+      <li><b>服務範圍：</b>本合約服務範圍以「一、建置項目」所列為限。未列項目（例：LINE 串接、POS 整合、新門市擴增、Prompt 大幅改寫、報表客製）均屬新需求，另行報價。</li>
+      <li><b>變更管理：</b>超出原合約範圍之新功能需求，需另簽變更單確認。變更費用 NT$ 5,000 起（未稅），實際時程與費用視複雜度另議。</li>
+      <li><b>智慧財產權：</b>系統架構、n8n 工作流邏輯、AI Prompt 設計、程式碼為 JOMO 所有，客戶獲永久使用授權，不得轉售或複製至關係企業以外之第三方。客戶提供之業務資料、品牌配置、回覆風格規範為客戶所有。雙方同意：JOMO 得於去識別化（不揭露客戶名稱、門市名稱、具體數據）後，將本案導入經驗用於內部技術改進與案例展示。</li>
+      <li><b>個人資料保護：</b>雙方同意就本服務涉及之個人資料處理，依《個人資料保護法》第 4 條及施行細則第 8 條辦理。JOMO 作為「受託處理者」，僅於客戶指示範圍內處理個資、採取適當安全措施、不得為其他目的使用；合約終止後應於 30 日內刪除或返還所持個資。客戶為「委託機關」，就個資之蒐集合法性與告知義務負責。</li>
+      <li><b>保密條款：</b>商業敏感資訊包含但不限於：評論原始資料、客訴紀錄、會員數據、營收數字、內部流程、POS 資料。JOMO 承諾不向第三方揭露。以下情形不在此限：(a) 已公開之資訊、(b) 非因洩密而知悉者、(c) 法令或主管機關要求揭露者。保密義務於合約終止後繼續有效 3 年。</li>
+      <li><b>違約責任與賠償上限：</b>任一方違約應負損害賠償責任。賠償金額以本合約建置費總額 <b>NT$ 45,000（未稅）</b> 為上限。但故意或重大過失不在此限。</li>
+      <li><b>稅金：</b>本報價金額未含 5% 營業稅。實際稅額與開立方式依下方「合作形式」條款選定者辦理：商行登記完成後開立統一發票（含 5% 營業稅）；登記完成前若採個人勞務報酬，則依規定代扣 10%。</li>
+      <li><b>合作形式：</b>可選 (A) 專案獎金、(B) 獨資商行對外承攬、(C) 個人勞務報酬 代扣 10%。以貴司財務流程為準。</li>
+      <li><b>準據法與管轄：</b>本合約之準據法為中華民國法律。因本合約所生爭議，雙方合意以台灣台北地方法院為第一審管轄法院。</li>
+      <li><b>有效期：</b>本報價有效期限至 <b>2026 / 06 / 25</b>，逾期請重新洽詢報價。</li>
+    </ol>
+  </div>
+
+  <!-- ==================== NOTE + TOTAL SUMMARY ==================== -->
+  <div class="note-row">
+    <div class="notes">
+      <div class="nt">備註 &middot; REMARKS</div>
+      <b>本報價單所有金額單位為新台幣，並以「未稅」為基準。</b>營業稅（5%）已於右側另列「含稅」欄位供參考。<br>
+      商行登記完成後，供應方欄位將補上正式商號與統一編號。<br>
+      本文件經雙方確認條款並簽署後生效。<br>
+      合作形式確定後將依稅制調整金額呈現方式（含稅／未稅／代扣）。
+    </div>
+
+    <div class="totals-inner" style="min-width:260px">
+      <table class="totals-inner">
+        <tr>
+          <td class="lb" style="font-size:10px">系統建置費（未稅）</td>
+          <td class="v">NT$ 45,000</td>
+        </tr>
+        <tr>
+          <td class="lb" style="font-size:10px">知識移轉（未稅）</td>
+          <td class="v">NT$ 18,000</td>
+        </tr>
+        <tr>
+          <td class="lb" style="font-size:10px">一次性合計（未稅）</td>
+          <td class="v">NT$ 63,000</td>
+        </tr>
+        <tr class="grand">
+          <td class="lb" style="font-size:10px">含稅總計</td>
+          <td class="v" style="color:var(--orange)">NT$ 66,150</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== SIGNATURES ==================== -->
+  <div class="sigs">
+    <div class="sig-box">
+      <div class="sig-hd">供 應 方 &nbsp;·&nbsp; PROVIDER</div>
+      <div class="sig-body">
+        <div class="sig-name">久默商行（籌備中）<br>JOMO · jomopower.com</div>
+        <div class="sig-lines">
+          代表人　卓鈺婷　Joy Cho<span class="dot"></span><br>
+          日　期<span class="dot"></span>
+        </div>
+      </div>
+    </div>
+    <div class="sig-box">
+      <div class="sig-hd">客 戶 &nbsp;·&nbsp; CLIENT</div>
+      <div class="sig-body">
+        <div class="sig-name">車麗屋汽車百貨股份有限公司</div>
+        <div class="sig-lines">
+          代表人<span class="dot"></span><br>
+          日　期<span class="dot"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:14px;padding:10px 14px;background:#fff8f3;border-left:3px solid var(--orange);font-size:11px;color:#6b4230;letter-spacing:0.3px;line-height:1.6">
+    <b style="color:var(--orange)">※ 簽署效力</b>　本文件同時作為報價單與服務合約書使用，雙方簽署後即具合約效力，無需另簽合約。如貴司法務部另有正式合約格式需求，雙方得以本文件條款為基礎另行簽署正式合約。
+  </div>
+
+  <!-- ==================== FOOTER ==================== -->
+  <div class="ft">
+    <div>JOMO · 久默商行</div>
+    <div class="seal">共 2 頁</div>
+  </div>
+
+</div>
+</body>
+</html>
